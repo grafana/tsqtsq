@@ -25,3 +25,8 @@ export type AggregationParams = {
   /** drop these labels from the result vector */
   by?: string;
 };
+
+export type LogicalOpParams = {
+  left: string;
+  right: string;
+};

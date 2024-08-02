@@ -1,4 +1,4 @@
-import { AggregationParams } from "./types";
+import { AggregationParams, LogicalOpParams } from "./types";
 
 export const promql = {
   x_over_time: (x: string, q: string, range = "$__range", interval = "") => {
@@ -36,6 +36,7 @@ export const promql = {
   byOrWithout: ({ by, without }: AggregationParams) =>
     by ? promql.by(by) : promql.without(without),
 
+  // Aggregation
   sum: (params: AggregationParams) =>
     `sum${promql.byOrWithout(params)}(${params.expr})`,
   min: (params: AggregationParams) =>
@@ -48,4 +49,20 @@ export const promql = {
     `group${promql.byOrWithout(params)}(${params.expr})`,
   count: (params: AggregationParams) =>
     `count${promql.byOrWithout(params)}(${params.expr})`,
+  stddev: (params: AggregationParams) =>
+    `stddev${promql.byOrWithout(params)}(${params.expr})`,
+  stdvar: (params: AggregationParams) =>
+    `stdvar${promql.byOrWithout(params)}(${params.expr})`,
+  count_values: (params: AggregationParams) =>
+    `count_values${promql.byOrWithout(params)}(${params.expr})`,
+  bottomk: (params: AggregationParams) =>
+    `bottomk${promql.byOrWithout(params)}(${params.expr})`,
+  topk: (params: AggregationParams) =>
+    `topk${promql.byOrWithout(params)}(${params.expr})`,
+  quantile: (params: AggregationParams) =>
+    `quantile${promql.byOrWithout(params)}(${params.expr})`,
+
+  and: (params: LogicalOpParams) => `${params.left} and ${params.right}`,
+  or: (params: LogicalOpParams) => `${params.left} or ${params.right}`,
+  unless: (params: LogicalOpParams) => `${params.left} unless ${params.right}`,
 };
