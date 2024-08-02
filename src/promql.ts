@@ -5,6 +5,7 @@ export const promql = {
     return `${x}_over_time((${q})[${range}:${interval}])`;
   },
 
+  // Aggregation over time
   avg_over_time: (q: string, range?: string, interval?: string) =>
     promql.x_over_time("avg", q, range, interval),
   count_over_time: (q: string, range?: string, interval?: string) =>
@@ -23,6 +24,8 @@ export const promql = {
     promql.x_over_time("stdvar", q, range, interval),
   sum_over_time: (q: string, range?: string, interval?: string) =>
     promql.x_over_time("sum", q, range, interval),
+  quantile_over_time: (q: string, range?: string, interval?: string) =>
+    promql.x_over_time("quantile", q, range, interval),
 
   offset: (offset?: number, units?: string) => {
     // implicit cast because syntax checker only generates string args
@@ -53,14 +56,14 @@ export const promql = {
     `stddev${promql.byOrWithout(params)}(${params.expr})`,
   stdvar: (params: AggregationParams) =>
     `stdvar${promql.byOrWithout(params)}(${params.expr})`,
-  count_values: (params: AggregationParams) =>
-    `count_values${promql.byOrWithout(params)}(${params.expr})`,
-  bottomk: (params: AggregationParams) =>
-    `bottomk${promql.byOrWithout(params)}(${params.expr})`,
-  topk: (params: AggregationParams) =>
-    `topk${promql.byOrWithout(params)}(${params.expr})`,
-  quantile: (params: AggregationParams) =>
-    `quantile${promql.byOrWithout(params)}(${params.expr})`,
+  count_values: (parameter: number, params: AggregationParams) =>
+    `count_values${promql.byOrWithout(params)}(${parameter}, ${params.expr})`,
+  bottomk: (parameter: number, params: AggregationParams) =>
+    `bottomk${promql.byOrWithout(params)}(${parameter}, ${params.expr})`,
+  topk: (parameter: number, params: AggregationParams) =>
+    `topk${promql.byOrWithout(params)}(${parameter}, ${params.expr})`,
+  quantile: (parameter: number, params: AggregationParams) =>
+    `quantile${promql.byOrWithout(params)}(${parameter}, ${params.expr})`,
 
   and: (params: LogicalOpParams) => `${params.left} and ${params.right}`,
   or: (params: LogicalOpParams) => `${params.left} or ${params.right}`,

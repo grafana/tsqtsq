@@ -36,20 +36,20 @@ describe("Operators: Aggregations", () => {
       expected: "stdvar()",
     },
     {
-      actual: () => promql.count_values({ expr: "" }),
-      expected: "count_values()",
+      actual: () => promql.count_values(1, { expr: "" }),
+      expected: "count_values(1, )",
     },
     {
-      actual: () => promql.bottomk({ expr: "" }),
-      expected: "bottomk()",
+      actual: () => promql.bottomk(1, { expr: "" }),
+      expected: "bottomk(1, )",
     },
     {
-      actual: () => promql.topk({ expr: "" }),
-      expected: "topk()",
+      actual: () => promql.topk(1, { expr: "" }),
+      expected: "topk(1, )",
     },
     {
-      actual: () => promql.quantile({ expr: "" }),
-      expected: "quantile()",
+      actual: () => promql.quantile(1, { expr: "" }),
+      expected: "quantile(1, )",
     },
     {
       actual: () => promql.sum({ expr: 'test_metric{foo="bar"}' }),
@@ -72,6 +72,15 @@ describe("Operators: Aggregations", () => {
           by: "bar",
         }),
       expected: 'sum by (bar) (test_metric{foo="bar"})',
+    },
+    {
+      actual: () => promql.stddev({ expr: 'test_metric{foo="bar"}' }),
+      expected: 'stddev(test_metric{foo="bar"})',
+    },
+    {
+      actual: () =>
+        promql.stddev({ expr: 'test_metric{foo="bar"}', by: "foo" }),
+      expected: 'stddev by (foo) (test_metric{foo="bar"})',
     },
   ])("Generate PromQL query: $expected", ({ actual, expected }) => {
     expect(actual()).toStrictEqual(expected);
