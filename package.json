@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "typescript": "^5.5.4"
+  }
+}
