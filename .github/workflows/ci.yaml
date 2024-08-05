@@ -25,3 +25,39 @@ jobs:
 
       - name: Run tests
         run: npm run test
+  # build:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Use Node.js
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '20'
+
+  #     - name: Install dependencies
+  #       run: npm install
+
+  #     - name: Build and package release
+  #       run: npm run build
+
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: release-artifact
+  #         path: path/to/artifact
+
+  #     - name: Create release
+  #       uses: actions/create-release@v1
+  #       with:
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+  #         tag_name: ${{ github.run_number }}
+  #         release_name: Release ${{ github.run_number }}
+  #         draft: false
+  #         prerelease: false
+  #         body: |
+  #           Release notes:
+  #           - This is a new release
+  #         artifacts: release-artifact
