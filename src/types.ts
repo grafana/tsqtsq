@@ -42,11 +42,18 @@ export type LogicalOpParams = {
   right: string;
 };
 
-export type OffsetUnits = 'ms' | 's' | 'm' | 'h' | 'd' | 'w' | 'y';
+export interface OffsetUnits {
+  y?: number;
+  w?: number;
+  d?: number;
+  h?: number;
+  m?: number;
+  s?: number;
+  ms?: number;
+}
 
 export type Offset = {
-  offset: number;
-  units?: OffsetUnits;
+  units: OffsetUnits;
 };
 
 export type Rate = Omit<AggregateOverTime, 'range'>;

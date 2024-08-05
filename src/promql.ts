@@ -1,4 +1,5 @@
 import { AggregateOverTime, AggregateWithParameter, AggregationParams, LogicalOpParams, Offset, Rate } from './types';
+import { buildOffsetString } from './utils';
 
 export const promql = {
   x_over_time: (x: string, q: string, range = '$__range', interval = '') => {
@@ -21,9 +22,9 @@ export const promql = {
   quantile_over_time: ({ expr, range, interval }: AggregateOverTime) =>
     promql.x_over_time('quantile', expr, range, interval),
 
-  offset: ({ offset, units }: Offset) => {
-    units = units || 'd';
-    return offset && units ? `offset ${offset}${units}` : '';
+  offset: ({ units }: Offset) => {
+    const unitString = buildOffsetString(units);
+    return `offset ${unitString}`;
   },
 
   by: (labels?: string[]) => (labels ? ` by (${labels.join(', ')}) ` : ''),
