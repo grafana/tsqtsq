@@ -4,15 +4,11 @@ import { promql } from '../promql';
 describe('Basics: offset modifier', () => {
   it.each([
     {
-      actual: () => promql.offset(),
-      expected: '',
-    },
-    {
-      actual: () => promql.offset(42),
+      actual: () => promql.offset({ offset: 42 }),
       expected: 'offset 42d',
     },
     {
-      actual: () => promql.offset(42, 'h'),
+      actual: () => promql.offset({ offset: 42, units: 'h' }),
       expected: 'offset 42h',
     },
   ])('Generate PromQL offset modifier: $expected', ({ actual, expected }) => {

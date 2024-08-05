@@ -1,4 +1,4 @@
-import { AggregationParams, LogicalOpParams } from './types';
+import { AggregateOverTime, AggregateWithParameter, AggregationParams, LogicalOpParams, Offset, Rate } from './types';
 
 export const promql = {
   x_over_time: (x: string, q: string, range = '$__range', interval = '') => {
@@ -6,51 +6,51 @@ export const promql = {
   },
 
   // Aggregation over time
-  avg_over_time: (q: string, range?: string, interval?: string) => promql.x_over_time('avg', q, range, interval),
-  count_over_time: (q: string, range?: string, interval?: string) => promql.x_over_time('count', q, range, interval),
-  last_over_time: (q: string, range?: string, interval?: string) => promql.x_over_time('last', q, range, interval),
-  max_over_time: (q: string, range?: string, interval?: string) => promql.x_over_time('max', q, range, interval),
-  min_over_time: (q: string, range?: string, interval?: string) => promql.x_over_time('min', q, range, interval),
-  present_over_time: (q: string, range?: string, interval?: string) =>
-    promql.x_over_time('present', q, range, interval),
-  stddev_over_time: (q: string, range?: string, interval?: string) => promql.x_over_time('stddev', q, range, interval),
-  stdvar_over_time: (q: string, range?: string, interval?: string) => promql.x_over_time('stdvar', q, range, interval),
-  sum_over_time: (q: string, range?: string, interval?: string) => promql.x_over_time('sum', q, range, interval),
-  quantile_over_time: (q: string, range?: string, interval?: string) =>
-    promql.x_over_time('quantile', q, range, interval),
+  avg_over_time: ({ expr, range, interval }: AggregateOverTime) => promql.x_over_time('avg', expr, range, interval),
+  count_over_time: ({ expr, range, interval }: AggregateOverTime) => promql.x_over_time('count', expr, range, interval),
+  last_over_time: ({ expr, range, interval }: AggregateOverTime) => promql.x_over_time('last', expr, range, interval),
+  max_over_time: ({ expr, range, interval }: AggregateOverTime) => promql.x_over_time('max', expr, range, interval),
+  min_over_time: ({ expr, range, interval }: AggregateOverTime) => promql.x_over_time('min', expr, range, interval),
+  present_over_time: ({ expr, range, interval }: AggregateOverTime) =>
+    promql.x_over_time('present', expr, range, interval),
+  stddev_over_time: ({ expr, range, interval }: AggregateOverTime) =>
+    promql.x_over_time('stddev', expr, range, interval),
+  stdvar_over_time: ({ expr, range, interval }: AggregateOverTime) =>
+    promql.x_over_time('stdvar', expr, range, interval),
+  sum_over_time: ({ expr, range, interval }: AggregateOverTime) => promql.x_over_time('sum', expr, range, interval),
+  quantile_over_time: ({ expr, range, interval }: AggregateOverTime) =>
+    promql.x_over_time('quantile', expr, range, interval),
 
-  offset: (offset?: number, units?: string) => {
-    // implicit cast because syntax checker only generates string args
-    offset = offset ? +offset : 0;
+  offset: ({ offset, units }: Offset) => {
     units = units || 'd';
     return offset && units ? `offset ${offset}${units}` : '';
   },
 
-  by: (labels?: string) => (labels ? ` by (${labels}) ` : ''),
-  without: (labels?: string) => (labels ? ` without (${labels}) ` : ''),
-  byOrWithout: ({ by, without }: AggregationParams) => (by ? promql.by(by) : promql.without(without)),
+  by: (labels?: string[]) => (labels ? ` by (${labels.join(', ')}) ` : ''),
+  without: (labels?: string[]) => (labels ? ` without (${labels.join(', ')}) ` : ''),
+  byOrWithout: ({ by, without }: Omit<AggregationParams, 'expr'>) => (by ? promql.by(by) : promql.without(without)),
 
   // Aggregation
-  sum: (params: AggregationParams) => `sum${promql.byOrWithout(params)}(${params.expr})`,
-  min: (params: AggregationParams) => `min${promql.byOrWithout(params)}(${params.expr})`,
-  max: (params: AggregationParams) => `max${promql.byOrWithout(params)}(${params.expr})`,
-  avg: (params: AggregationParams) => `avg${promql.byOrWithout(params)}(${params.expr})`,
-  group: (params: AggregationParams) => `group${promql.byOrWithout(params)}(${params.expr})`,
-  count: (params: AggregationParams) => `count${promql.byOrWithout(params)}(${params.expr})`,
-  stddev: (params: AggregationParams) => `stddev${promql.byOrWithout(params)}(${params.expr})`,
-  stdvar: (params: AggregationParams) => `stdvar${promql.byOrWithout(params)}(${params.expr})`,
-  count_values: (parameter: number, params: AggregationParams) =>
-    `count_values${promql.byOrWithout(params)}(${parameter}, ${params.expr})`,
-  bottomk: (parameter: number, params: AggregationParams) =>
-    `bottomk${promql.byOrWithout(params)}(${parameter}, ${params.expr})`,
-  topk: (parameter: number, params: AggregationParams) =>
-    `topk${promql.byOrWithout(params)}(${parameter}, ${params.expr})`,
-  quantile: (parameter: number, params: AggregationParams) =>
-    `quantile${promql.byOrWithout(params)}(${parameter}, ${params.expr})`,
+  sum: ({ expr, by, without }: AggregationParams) => `sum${promql.byOrWithout({ by, without })}(${expr})`,
+  min: ({ expr, by, without }: AggregationParams) => `min${promql.byOrWithout({ by, without })}(${expr})`,
+  max: ({ expr, by, without }: AggregationParams) => `max${promql.byOrWithout({ by, without })}(${expr})`,
+  avg: ({ expr, by, without }: AggregationParams) => `avg${promql.byOrWithout({ by, without })}(${expr})`,
+  group: ({ expr, by, without }: AggregationParams) => `group${promql.byOrWithout({ by, without })}(${expr})`,
+  count: ({ expr, by, without }: AggregationParams) => `count${promql.byOrWithout({ by, without })}(${expr})`,
+  stddev: ({ expr, by, without }: AggregationParams) => `stddev${promql.byOrWithout({ by, without })}(${expr})`,
+  stdvar: ({ expr, by, without }: AggregationParams) => `stdvar${promql.byOrWithout({ by, without })}(${expr})`,
+  count_values: ({ expr, by, without, parameter }: AggregateWithParameter) =>
+    `count_values${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
+  bottomk: ({ expr, by, without, parameter }: AggregateWithParameter) =>
+    `bottomk${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
+  topk: ({ expr, by, without, parameter }: AggregateWithParameter) =>
+    `topk${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
+  quantile: ({ expr, by, without, parameter }: AggregateWithParameter) =>
+    `quantile${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
 
-  and: (params: LogicalOpParams) => `${params.left} and ${params.right}`,
-  or: (params: LogicalOpParams) => `${params.left} or ${params.right}`,
-  unless: (params: LogicalOpParams) => `${params.left} unless ${params.right}`,
+  and: ({ left, right }: LogicalOpParams) => `${left} and ${right}`,
+  or: ({ left, right }: LogicalOpParams) => `${left} or ${right}`,
+  unless: ({ left, right }: LogicalOpParams) => `${left} unless ${right}`,
 
-  rate: (q: string, interval = '$__rate_interval') => `rate(${q}[${interval}])`,
+  rate: ({ expr, interval = '$__rate_interval' }: Rate) => `rate(${expr}[${interval}])`,
 };

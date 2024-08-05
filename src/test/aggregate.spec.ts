@@ -36,19 +36,19 @@ describe('Operators: Aggregations', () => {
       expected: 'stdvar()',
     },
     {
-      actual: () => promql.count_values(1, { expr: '' }),
+      actual: () => promql.count_values({ parameter: 1, expr: '' }),
       expected: 'count_values(1, )',
     },
     {
-      actual: () => promql.bottomk(1, { expr: '' }),
+      actual: () => promql.bottomk({ parameter: 1, expr: '' }),
       expected: 'bottomk(1, )',
     },
     {
-      actual: () => promql.topk(1, { expr: '' }),
+      actual: () => promql.topk({ parameter: 1, expr: '' }),
       expected: 'topk(1, )',
     },
     {
-      actual: () => promql.quantile(1, { expr: '' }),
+      actual: () => promql.quantile({ parameter: 1, expr: '' }),
       expected: 'quantile(1, )',
     },
     {
@@ -56,19 +56,19 @@ describe('Operators: Aggregations', () => {
       expected: 'sum(test_metric{foo="bar"})',
     },
     {
-      actual: () => promql.sum({ expr: 'test_metric{foo="bar"}', without: 'foo' }),
+      actual: () => promql.sum({ expr: 'test_metric{foo="bar"}', without: ['foo'] }),
       expected: 'sum without (foo) (test_metric{foo="bar"})',
     },
     {
-      actual: () => promql.sum({ expr: 'test_metric{foo="bar"}', by: 'foo' }),
-      expected: 'sum by (foo) (test_metric{foo="bar"})',
+      actual: () => promql.sum({ expr: 'test_metric{foo="bar"}', by: ['foo', 'bar', 'baz'] }),
+      expected: 'sum by (foo, bar, baz) (test_metric{foo="bar"})',
     },
     {
       actual: () =>
         promql.sum({
           expr: 'test_metric{foo="bar"}',
-          without: 'foo',
-          by: 'bar',
+          without: ['foo'],
+          by: ['bar'],
         }),
       expected: 'sum by (bar) (test_metric{foo="bar"})',
     },
@@ -77,7 +77,7 @@ describe('Operators: Aggregations', () => {
       expected: 'stddev(test_metric{foo="bar"})',
     },
     {
-      actual: () => promql.stddev({ expr: 'test_metric{foo="bar"}', by: 'foo' }),
+      actual: () => promql.stddev({ expr: 'test_metric{foo="bar"}', by: ['foo'] }),
       expected: 'stddev by (foo) (test_metric{foo="bar"})',
     },
   ])('Generate PromQL query: $expected', ({ actual, expected }) => {
