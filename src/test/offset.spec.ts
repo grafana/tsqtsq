@@ -4,6 +4,10 @@ import { promql } from '../promql';
 describe('Basics: offset modifier', () => {
   it.each([
     {
+      actual: () => promql.offset({ units: {} }),
+      expected: 'offset 0m',
+    },
+    {
       actual: () => promql.offset({ units: { d: 42 } }),
       expected: 'offset 42d',
     },
