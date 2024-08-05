@@ -57,3 +57,17 @@ export type Offset = {
 };
 
 export type Rate = Omit<AggregateOverTime, 'range'>;
+
+export type LabelReplace = {
+  expr: string;
+  newLabel: string;
+  existingLabel: string;
+  replacement?: string;
+  regex?: string;
+};
+
+export type LabelJoin = {
+  expr: string;
+  labels: string[];
+  separator?: string;
+};

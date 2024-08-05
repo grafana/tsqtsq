@@ -1,4 +1,13 @@
-import { AggregateOverTime, AggregateWithParameter, AggregationParams, LogicalOpParams, Offset, Rate } from './types';
+import {
+  AggregateOverTime,
+  AggregateWithParameter,
+  AggregationParams,
+  LabelJoin,
+  LabelReplace,
+  LogicalOpParams,
+  Offset,
+  Rate,
+} from './types';
 import { buildOffsetString } from './utils';
 
 export const promql = {
@@ -51,4 +60,11 @@ export const promql = {
   unless: ({ left, right }: LogicalOpParams) => `${left} unless ${right}`,
 
   rate: ({ expr, interval = '$__rate_interval' }: Rate) => `rate(${expr}[${interval}])`,
+
+  // Labels
+  label_replace: ({ expr, newLabel, existingLabel, replacement = '$1', regex = '(.*)' }: LabelReplace) =>
+    `label_replace(${expr}, "${newLabel}", "${replacement}", "${existingLabel}", "${regex}")`,
+
+  label_join: ({ expr, separator = ', ', labels }: LabelJoin) =>
+    `label_join(${expr}, "${separator}", ${labels.map((label) => `"${label}"`).join(separator)})`,
 };
