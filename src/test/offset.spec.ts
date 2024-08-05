@@ -5,7 +5,7 @@ describe('Basics: offset modifier', () => {
   it.each([
     {
       actual: () => promql.offset({ units: {} }),
-      expected: 'offset 0m',
+      expected: 'offset 1m',
     },
     {
       actual: () => promql.offset({ units: { d: 42 } }),
