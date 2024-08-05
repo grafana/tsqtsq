@@ -68,4 +68,6 @@ export const promql = {
   and: (params: LogicalOpParams) => `${params.left} and ${params.right}`,
   or: (params: LogicalOpParams) => `${params.left} or ${params.right}`,
   unless: (params: LogicalOpParams) => `${params.left} unless ${params.right}`,
+
+  rate: (q: string, interval = "$__rate_interval") => `rate(${q}[${interval}])`,
 };
