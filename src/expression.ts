@@ -1,4 +1,4 @@
-import { LabelSelector, LabelsWithValues, MatchingOperator } from "./types";
+import { LabelSelector, LabelsWithValues, MatchingOperator } from './types';
 
 export class Expression {
   metric: string;
@@ -35,10 +35,8 @@ export class Expression {
 
   toString(): string {
     const selectors = Array.from(this.selectors)
-      .map(
-        ([label, selector]) => `${label}${selector.operator}"${selector.value}"`
-      )
-      .join(", ");
+      .map(([label, selector]) => `${label}${selector.operator}"${selector.value}"`)
+      .join(', ');
     return `${this.metric}{${selectors}}`;
   }
 }

@@ -1,8 +1,8 @@
 export enum MatchingOperator {
-  equal = "=",
-  notEqual = "!=",
-  regexMatch = "=~",
-  notRegexMatch = "!~",
+  equal = '=',
+  notEqual = '!=',
+  regexMatch = '=~',
+  notRegexMatch = '!~',
 }
 
 export type LabelSelector = {
