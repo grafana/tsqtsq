@@ -1,21 +1,21 @@
-import { promql } from "../promql";
+import { promql } from '../promql';
 
 // https://prometheus.io/docs/prometheus/latest/querying/basics/#offset-modifier
-describe("Basics: offset modifier", () => {
+describe('Basics: offset modifier', () => {
   it.each([
     {
       actual: () => promql.offset(),
-      expected: "",
+      expected: '',
     },
     {
       actual: () => promql.offset(42),
-      expected: "offset 42d",
+      expected: 'offset 42d',
     },
     {
-      actual: () => promql.offset(42, "h"),
-      expected: "offset 42h",
+      actual: () => promql.offset(42, 'h'),
+      expected: 'offset 42h',
     },
-  ])("Generate PromQL offset modifier: $expected", ({ actual, expected }) => {
+  ])('Generate PromQL offset modifier: $expected', ({ actual, expected }) => {
     expect(actual()).toStrictEqual(expected);
   });
 });
