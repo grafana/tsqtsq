@@ -22,7 +22,7 @@ export type AggregationParams = {
   /** remove these labels from the result vector */
   without?: string;
 
-  /** drop these labels from the result vector */
+  /** drop all labels except these from the result vector */
   by?: string;
 };
 
