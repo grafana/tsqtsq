@@ -65,6 +65,6 @@ export const promql = {
   label_replace: ({ expr, newLabel, existingLabel, replacement = '$1', regex = '(.*)' }: LabelReplace) =>
     `label_replace(${expr}, "${newLabel}", "${replacement}", "${existingLabel}", "${regex}")`,
 
-  label_join: ({ expr, separator = ', ', labels }: LabelJoin) =>
-    `label_join(${expr}, "${separator}", ${labels.map((label) => `"${label}"`).join(separator)})`,
+  label_join: ({ expr, newLabel, separator = ',', labels }: LabelJoin) =>
+    `label_join(${expr}, "${newLabel}", "${separator}", ${labels.map((label) => `"${label}"`).join(', ')})`,
 };

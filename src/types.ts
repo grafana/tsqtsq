@@ -68,6 +68,7 @@ export type LabelReplace = {
 
 export type LabelJoin = {
   expr: string;
+  newLabel: string;
   labels: string[];
   separator?: string;
 };
