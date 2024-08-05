@@ -22,10 +22,7 @@ export const promql = {
   quantile_over_time: ({ expr, range, interval }: AggregateOverTime) =>
     promql.x_over_time('quantile', expr, range, interval),
 
-  offset: ({ units }: Offset) => {
-    const unitString = buildOffsetString(units);
-    return `offset ${unitString}`;
-  },
+  offset: ({ units }: Offset) => buildOffsetString(units),
 
   by: (labels?: string[]) => (labels ? ` by (${labels.join(', ')}) ` : ''),
   without: (labels?: string[]) => (labels ? ` without (${labels.join(', ')}) ` : ''),
