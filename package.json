@@ -10,5 +10,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "build": "esbuild src/index.ts --bundle --outfile=dist/index.js "
+  },
+  "dependencies": {
+    "@lezer/highlight": "^1.2.0",
+    "@lezer/lr": "^1.4.2",
+    "@prometheus-io/lezer-promql": "^0.54.0-rc.1"
   }
 }
