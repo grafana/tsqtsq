@@ -1,52 +1,135 @@
 import { SyntaxNode, SyntaxNodeRef, Tree } from '@lezer/common';
 import {
+  AggregateExpr,
+  Bottomk,
+  Count,
+  CountValues,
   EqlRegex,
   EqlSingle,
+  FunctionCall,
+  FunctionCallBody,
   Identifier,
   LabelMatchers,
   LabelName,
+  LimitK,
+  LimitRatio,
   MatchOp,
   MatrixSelector,
   Neq,
   NeqRegex,
   ParenExpr,
+  Quantile,
   QuotedLabelMatcher,
   QuotedLabelName,
   StepInvariantExpr,
   StringLiteral,
   SubqueryExpr,
+  Topk,
   UnaryExpr,
   UnquotedLabelMatcher,
   VectorSelector,
 } from '@prometheus-io/lezer-promql';
 import { Expression } from '../expression';
-import { LabelSelector, LabelsWithValues, MatchingOperator } from '../types';
+import { AggregationParams, LabelSelector, LabelsWithValues, MatchingOperator } from '../types';
+import { promql } from '../promql';
 
 export enum LanguageType {
   PromQL = 'PromQL',
   MetricName = 'MetricName',
 }
 
+type item = {
+  id: number;
+  parent?: number;
+  children: item[];
+  func?: any;
+  args?: any;
+  expression?: Expression;
+};
+
 export class Migration {
   private tree: Tree;
   private statement: string;
-  private expressions: Expression[];
+  private items: Map<number, item>;
 
   constructor(statement: string, tree: Tree) {
     this.tree = tree;
     this.statement = statement;
-    this.expressions = [];
+    this.items = new Map();
   }
 
-  toStrings(): string[] {
-    return this.expressions.map((expr) => expr.toString());
+  toString(): string {
+    console.log(this.items);
+
+    if (!this.items.has(0)) {
+      return '';
+    }
+
+    const root = this.items.get(0)!;
+    if (root.children.length === 0) {
+      return root?.expression?.toString() || root?.func?.(root?.args);
+    }
+
+    const renderedChildren = root.children.map((child) => {
+      if (child.expression) {
+        return child.expression.toString();
+      }
+
+      if (child.func) {
+        return child.func(child.args);
+      }
+    });
+
+    if (root.expression !== undefined) {
+      console.error('expression has children', renderedChildren);
+    }
+
+    if (root.func !== undefined) {
+      if (root.args?.expr === '') {
+        // replace expr arg placeholder with rendered children
+        root.args.expr = renderedChildren.join(' ');
+      } else {
+        console.error('orhaned children', renderedChildren);
+      }
+      return root.func(root.args);
+    }
+
+    console.error('got to the end without doing anything');
+    return '';
   }
 
   analyze() {
-    this.checkAST(this.tree.topNode.firstChild);
+    const entryNode = this.tree.topNode.firstChild;
+    if (!entryNode) {
+      return;
+    }
+    this.checkAST(entryNode);
+    this.optimize();
   }
 
-  checkAST(node: SyntaxNode | null) {
+  private optimize() {
+    console.log('optimize::enter');
+    let itemsWithParents: number;
+    do {
+      itemsWithParents = 0;
+      this.items.forEach((item, key) => {
+        if (item.parent === undefined) {
+          // root node, id 0
+          return;
+        }
+
+        ++itemsWithParents;
+        const updatedParent = this.items.get(item.parent)!;
+        updatedParent.children.push(item);
+        this.items.set(item.parent, updatedParent);
+        this.items.delete(key);
+      });
+      console.log('itemsWithParents', itemsWithParents);
+    } while (itemsWithParents);
+    console.log('optimize::exit');
+  }
+
+  checkAST(node: SyntaxNode | null, parent?: number) {
     if (!node) {
       return;
     }
@@ -57,11 +140,15 @@ export class Migration {
       case SubqueryExpr:
       case MatrixSelector:
       case StepInvariantExpr:
-        this.checkAST(node.getChild('Expr'));
+        this.checkAST(node.getChild('Expr'), node.cursor().from);
         break;
 
       case VectorSelector:
-        this.handleVectorSelector(node);
+        this.handleVectorSelector(node, parent);
+        break;
+
+      case AggregateExpr:
+        this.handleAggregateExpr(node, parent);
         break;
 
       default:
@@ -74,7 +161,7 @@ export class Migration {
     return this.statement.slice(ref.from, ref.to);
   }
 
-  private handleVectorSelector(node: SyntaxNode) {
+  private handleVectorSelector(node: SyntaxNode, parent?: number) {
     const expressionOpts = {
       metric: '',
       values: {} as LabelsWithValues,
@@ -151,6 +238,71 @@ export class Migration {
     });
 
     // expression is ready
-    this.expressions.push(expression);
+    // this.expressions.push(expression);
+    // create promql.expression item, parent is?
+    const item = {
+      id: node.cursor().from,
+      parent,
+      children: [],
+      expression,
+    };
+
+    if (parent && this.items.has(parent)) {
+      const parentItem = this.items.get(parent)!;
+      parentItem?.children.push(item);
+      this.items.set(parent, parentItem);
+    } else {
+      this.items.set(node.cursor().from, item);
+    }
+  }
+
+  private handleAggregateExpr(node: SyntaxNode, parent?: number) {
+    const aggregateOp = node.firstChild?.firstChild;
+    if (!aggregateOp) {
+      return;
+    }
+
+    switch (aggregateOp.type.id) {
+      case Topk:
+      case Bottomk:
+      case LimitK:
+      case LimitRatio:
+      case Quantile:
+        // scalar parameter required
+        break;
+
+      case CountValues:
+        // string parameter required
+        break;
+
+      case Count:
+        // create promql.count item
+        const item = {
+          id: aggregateOp.cursor().from,
+          parent: parent,
+          children: [],
+          func: promql.count,
+          args: {
+            expr: '', // TODO need to inject body here
+            // by: [],
+            // without: [],
+          } as AggregationParams,
+        };
+
+        if (parent && this.items.has(parent)) {
+          const parentItem = this.items.get(parent)!;
+          parentItem?.children.push(item);
+          this.items.set(parent, parentItem);
+        } else {
+          this.items.set(aggregateOp.cursor().from, item);
+        }
+        break;
+    }
+    node
+      .getChild(FunctionCallBody)
+      ?.getChildren('Expr')
+      ?.map((child) => {
+        this.checkAST(child, aggregateOp.cursor().from); // parent is the promql.count item above
+      });
   }
 }
