@@ -1,13 +1,15 @@
 import { SyntaxNode, SyntaxNodeRef, Tree } from '@lezer/common';
 import {
   AggregateExpr,
+  AggregateModifier,
   Bottomk,
+  By,
   Count,
   CountValues,
   EqlRegex,
   EqlSingle,
-  FunctionCall,
   FunctionCallBody,
+  GroupingLabels,
   Identifier,
   LabelMatchers,
   LabelName,
@@ -28,6 +30,7 @@ import {
   UnaryExpr,
   UnquotedLabelMatcher,
   VectorSelector,
+  Without,
 } from '@prometheus-io/lezer-promql';
 import { Expression } from '../expression';
 import { AggregationParams, LabelSelector, LabelsWithValues, MatchingOperator } from '../types';
@@ -59,8 +62,6 @@ export class Migration {
   }
 
   toString(): string {
-    console.log(this.items);
-
     if (!this.items.has(0)) {
       return '';
     }
@@ -108,7 +109,6 @@ export class Migration {
   }
 
   private optimize() {
-    console.log('optimize::enter');
     let itemsWithParents: number;
     do {
       itemsWithParents = 0;
@@ -124,9 +124,7 @@ export class Migration {
         this.items.set(item.parent, updatedParent);
         this.items.delete(key);
       });
-      console.log('itemsWithParents', itemsWithParents);
     } while (itemsWithParents);
-    console.log('optimize::exit');
   }
 
   checkAST(node: SyntaxNode | null, parent?: number) {
@@ -269,10 +267,12 @@ export class Migration {
       case LimitRatio:
       case Quantile:
         // scalar parameter required
+        console.error('not implemented', aggregateOp.type.name);
         break;
 
       case CountValues:
         // string parameter required
+        console.error('not implemented', aggregateOp.type.name);
         break;
 
       case Count:
@@ -283,11 +283,30 @@ export class Migration {
           children: [],
           func: promql.count,
           args: {
-            expr: '', // TODO need to inject body here
-            // by: [],
-            // without: [],
+            expr: '', // will be populated by optimize() later
           } as AggregationParams,
         };
+
+        // 'by (foo)' or 'without (bar)'
+        const modifier = node.getChild(AggregateModifier);
+        if (modifier) {
+          const labels = modifier.getChild(GroupingLabels);
+          if (labels) {
+            const labelArray = [
+              ...labels.getChildren(LabelName).map((label) => this.print(label)),
+              ...labels.getChildren(QuotedLabelName).map((label) => this.print(label).slice(1, -1)),
+            ];
+            switch (modifier.firstChild?.type.id) {
+              case By:
+                item.args.by = labelArray;
+                break;
+
+              case Without:
+                item.args.without = labelArray;
+                break;
+            }
+          }
+        }
 
         if (parent && this.items.has(parent)) {
           const parentItem = this.items.get(parent)!;
