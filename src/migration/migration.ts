@@ -35,6 +35,7 @@ import {
 import { Expression } from '../expression';
 import { AggregationParams, LabelSelector, LabelsWithValues, MatchingOperator } from '../types';
 import { promql } from '../promql';
+import { createPrinter, createSourceFile, NewLineKind, ScriptKind, ScriptTarget } from 'typescript';
 
 export enum LanguageType {
   PromQL = 'PromQL',
@@ -50,6 +51,36 @@ type item = {
   expression?: Expression;
 };
 
+const cloneItem = (original: item) => {
+  const clone: item = {
+    id: original.id,
+    parent: original.parent,
+    children: [...original.children],
+    func: original.func,
+    args: { ...original.args },
+    expression: original.expression?.clone(),
+  };
+
+  return clone;
+};
+
+const matchingOperatorFromSymbol = (symbol: string) => {
+  switch (symbol) {
+    default:
+    case '=':
+      return 'MatchingOperator.equal';
+
+    case '!=':
+      return 'MatchingOperator.notEqual';
+
+    case '=~':
+      return 'MatchingOperator.regexMatch';
+
+    case '!~':
+      return 'MatchingOperator.notRegexMatch';
+  }
+};
+
 export class Migration {
   private tree: Tree;
   private statement: string;
@@ -61,23 +92,71 @@ export class Migration {
     this.items = new Map();
   }
 
-  toString(): string {
-    if (!this.items.has(0)) {
+  funcToTs(func: any, args?: any): string {
+    // TODO
+    return 'FUNC_GOES_HERE';
+  }
+
+  expressionToTs(expr: Expression): string {
+    const signature =
+      expr.selectors.size > 0
+        ? 'values: {' + [...expr.selectors.values()].map((sel) => `${sel.label}?: string`).join(',') + '}'
+        : '';
+
+    const defaultSelectors =
+      expr.selectors.size > 0
+        ? [...expr.selectors.values()]
+            .map((sel) => `{label: "${sel.label}", operator: ${matchingOperatorFromSymbol(sel.operator)}, value: ""}`)
+            .join(',')
+        : '';
+
+    const sourceText = `
+const foo = (${signature}) => new Expression({
+  metric: "${expr.metric}",
+  values${signature ? '' : ': {}'},
+  defaultOperator: MatchingOperator.equal,
+  defaultSelectors: [${defaultSelectors}],
+}).toString();
+`.trimStart();
+
+    const sourceFile = createSourceFile(
+      'expression.generated.ts',
+      sourceText,
+      ScriptTarget.Latest,
+      false,
+      ScriptKind.TS
+    );
+    const printer = createPrinter({ newLine: NewLineKind.LineFeed });
+    return printer.printFile(sourceFile);
+  }
+
+  toString(ts = false): string {
+    const originalRoot = this.items.get(0);
+    if (!originalRoot) {
       return '';
     }
 
-    const root = this.items.get(0)!;
+    // clone root item to prevent changes happening to this.items by reference
+    const root = cloneItem(originalRoot);
+
     if (root.children.length === 0) {
-      return root?.expression?.toString() || root?.func?.(root?.args);
+      if (root?.expression) {
+        // plain old expression, e.g. 'foo{bar="baz"}'
+        return ts ? this.expressionToTs(root.expression) : root.expression.toString();
+      }
+      if (root?.func) {
+        // func without children, e.g. 'time()'
+        return ts ? console.error('not implemented!') : root.func(root.args);
+      }
     }
 
     const renderedChildren = root.children.map((child) => {
       if (child.expression) {
-        return child.expression.toString();
+        return ts ? this.expressionToTs(child.expression) : child.expression.toString();
       }
 
       if (child.func) {
-        return child.func(child.args);
+        return ts ? this.funcToTs(child.func, child.args) : child.func(child.args);
       }
     });
 
@@ -88,11 +167,11 @@ export class Migration {
     if (root.func !== undefined) {
       if (root.args?.expr === '') {
         // replace expr arg placeholder with rendered children
-        root.args.expr = renderedChildren.join(' ');
+        root.args.expr = ts ? renderedChildren.join('\n') : renderedChildren.join(' ');
       } else {
-        console.error('orhaned children', renderedChildren);
+        console.error('orhaned children', root.args?.expr, renderedChildren);
       }
-      return root.func(root.args);
+      return ts ? this.funcToTs(root.func, root.args) : root.func(root.args);
     }
 
     console.error('got to the end without doing anything');
@@ -236,8 +315,6 @@ export class Migration {
     });
 
     // expression is ready
-    // this.expressions.push(expression);
-    // create promql.expression item, parent is?
     const item = {
       id: node.cursor().from,
       parent,
