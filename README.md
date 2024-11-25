@@ -1,10 +1,8 @@
-# tsqtsq
+# tsqtsq - A PromQL Query Library
 
-Hackathon summer 2024 project
+`tsqtsq` aims to make hard-coded PromQL queries easier to read and maintain. Wide-ranging changes and common "query snippets" have varying approaches and often impact query readability. By introducing typed, templated queries, changing common expressions and debugging becomes much easier.
 
-# PromQL Query Library
-
-Kubernetes Monitoring uses an ever-growing number of PromQL queries, which can be found over in [queries.ts](../queries.ts). Previously, most of the PromQL was hand-written. Syntax-wise this is fine as due to the CI check which uses [node-generate.ts](../scripts/node-generate.ts). A large number of hand-written queries are, however, difficult to maintain. Wide-ranging changes and common "query snippets" have varying approaches and often impact query readability. Consider the following use cases:
+Consider the following use cases:
 
 - Implement de-duplication of all existing queries that use the KSM requests and limits metrics
 - Blanket-ignore pods named `POD` for all CPU usage queries
@@ -22,99 +20,123 @@ The library in this directory is an effort to reduce the potential toil involved
 - Embed "sensible defaults" and tribal knowledge using query abstraction - e.g. using `container!=""` as a default matcher for requests/limits but only if the `container` label is not passed a value (this avoids matching against the confusing pod-level cgroup metrics).
 - Prefer named object/property parameters over ordered/implicit arguments - because who can remember whether the labels or the query comes first.
 
-## Worked Example
+## Examples
 
-Here's the entrypoint, we want to sum all of the CPU container limits across a whole cluster:
-
-- A list of KSM metrics and rules are available in [metrics/ksm.ts](metrics/ksm.ts), we'll use `ksm.metrics.kube_pod_container_resource_limits`.
-  - This metric has only one required label: `resource` and it has to be either `cpu` or `memory`
-  - A bunch of other labels are available (`cluster`, `node`, `namespace` etc), only pass the ones you need, doesn't matter if it's `undefined` (it will be automatically discarded if it is)
+`sum`
 
 ```ts
-// queries.ts
-ClusterDetail: {
-  CpuLimits: (cluster?: string) =>
-    // promql.sum() is pretty much 1:1 with what you would write in PromQL, i.e.: sum()
-    promql.sum({
-      // this part uses the Expression class and is where most of the work happens
-      expr: ksm.metrics.kube_pod_container_resource_limits({
-        resource: 'cpu',
-        cluster,
-      }),
-    }),
-}
+promql.sum({ expr: 'test_metric{foo="bar"}', by: ['foo', 'bar', 'baz'] });
 ```
 
-What does the query look like? You can run `make test-promql` and open up [rules.yml](../../rules.yml) to see what's generated:
+becomes
 
-```yaml
-- record: SceneQueries_ClusterDetail_CpuLimits_WithArgs
-  expr: sum(max by (cluster, node, namespace, pod, container) (kube_pod_container_resource_limits{container!="", resource=~"cpu", cluster=~"arg0"}))
-- record: SceneQueries_ClusterDetail_CpuLimits_WithoutArgs
-  expr: sum(max by (cluster, node, namespace, pod, container) (kube_pod_container_resource_limits{container!="", resource=~"cpu"}))
+```
+sum by (foo, bar, baz) (test_metric{foo="bar"})
 ```
 
-Here's just the PromQL query prettified and commented:
-
-```sql
-# promql.sum
-sum(
-  # auto de-duplication using max by
-  max by (cluster, node, namespace, pod, container) (
-    # ksm.metrics.kube_pod_container_resource_limits
-    #   - container!="" is a default label selector, which is only used if you
-    #     don't pass a container parameter.
-    kube_pod_container_resource_limits{container!="", resource=~"cpu", cluster=~"arg0"}
-  )
-)
-```
-
-How does it work? Check out [metrics/ksm.ts](metrics/ksm.ts). This is where we define a reusable, de-duplicated, default-valued query for metrics and rules. Here's just the `kube_pod_container_resource_limits` metric:
+`rate`
 
 ```ts
-export const ksm = {
-  metrics: {
-    kube_pod_container_resource_limits: (
-      values: kube_pod_container_resource_labels
-    ) => {
-      return promql.max({
-        by: "cluster, node, namespace, pod, container",
-        expr: new Expression({
-          metric: "kube_pod_container_resource_limits",
-          values,
-          defaultOperator: MatchingOperator.regexMatch,
-          defaultSelectors: [
-            {
-              label: "container",
-              operator: MatchingOperator.notEqual,
-              value: "",
-            },
-          ],
-        }).toString(),
-      });
-    },
+promql.rate({ expr: 'test_metric{bar="baz"}', interval: '5m' });
+```
+
+becomes
+
+```
+test_metric(foo{bar="baz"}[5m])
+```
+
+`label manipulation`
+
+```ts
+promql.label_replace({ expr: 'test_metric{foo="bar"}', newLabel: 'baz', existingLabel: 'foo' });
+```
+
+becomes
+
+```
+label_replace(test_metric{foo="bar"}, "baz", "$1", "foo", "(.*)")
+```
+
+`aggregation over time`
+
+```ts
+promql.sum_over_time({ expr: 'test_metric{foo="bar"}' });
+```
+
+becomes
+
+```
+sum_over_time((test_metric{foo="bar"})[$__range:])
+```
+
+`simple offset`
+
+```ts
+promql.offset({ units: { d: 42 } });
+```
+
+becomes
+
+```
+offset 42d
+```
+
+`complex offset`
+
+```ts
+promql.offset({ units: { y: 2, d: 1, h: 42, m: 2, s: 3 } });
+```
+
+becomes
+
+```
+offset 2y1d42h2m3s
+```
+
+### Using the `Expression` class
+
+The `Expression` class can be used to compose reusable PromQL expressions to be further used with the `promql` library.
+
+```ts
+new Expression({
+  metric: 'test_metric',
+  values: {
+    arg1: 'foo',
+    arg2: 'bar'
   },
-};
+  defaultOperator: MatchingOperator.regexMatch,
+  defaultSelectors: [{ label: 'baz', operator: MatchingOperator.notEqual, value: '' }],
+}).toString(),
 ```
 
-The `toString()` call of [Expression](expression.ts) is where the PromQL string generation actually happens, here're the important parts:
+becomes
+
+```
+test_metric{baz!="", arg1=~"foo", arg2=~"bar"}
+```
+
+which can then be used with a `promql` method
 
 ```ts
-export class Expression {
-  // ... snip
-  selectors = new Map<string, LabelSelector>();
-
-	toString(): string {
-    const selectors = Array.from(this.selectors)
-      .map(([label, selector]) => `${label}${selector.operator}"${selector.value}"`)
-      .join(', ');
-    return `${this.metric}{${selectors}}`;
-  }
+promql.max({
+  by: 'baz',
+  expr: new Expression({
+    metric: 'test_metric',
+    values: {
+      arg1: 'foo',
+      arg2: 'bar',
+    },
+    defaultOperator: MatchingOperator.regexMatch,
+    defaultSelectors: [{ label: 'baz', operator: MatchingOperator.notEqual, value: '' }],
+  }).toString(),
+});
 ```
 
-## More Examples
+becomes
 
-Check out the table tests for a full range of examples, showing the capabilities of the `Expression` class:
+```
+max by (baz) (test_metric{baz!="", arg1=~"foo", arg2=~"bar"})
+```
 
-- [expression.spec.ts](expression.spec.ts)
-- [promql.spec.ts](promql.spec.ts)
+see [promql.ts](./src/promql.ts) for all available methods.
