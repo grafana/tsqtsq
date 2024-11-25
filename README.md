@@ -4,10 +4,9 @@
 
 Consider the following use cases:
 
-- Implement de-duplication of all existing queries that use the KSM requests and limits metrics
-- Blanket-ignore pods named `POD` for all CPU usage queries
-- Support both OpenCost and cloudcost-exporter in all cost queries
-- Support both Node Exporter and Windows Exporter in all memory usage queries
+- Implement de-duplication of all existing queries
+- Establish patterns for writing new queries
+- Create reusable snippets that accept arguments for metric labels
 
 The library in this directory is an effort to reduce the potential toil involved in refactoring tasks like those mentioned above.
 
