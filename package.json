@@ -27,6 +27,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "build": "esbuild src/index.js --bundle --platform=node --outfile=dist/index.js "
+    "build": "esbuild src/index.js --bundle --platform=node --outfile=dist/index.js",
+    "publish": "npm build && npm publish"
   }
 }
