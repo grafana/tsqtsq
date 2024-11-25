@@ -22,6 +22,10 @@ The library in this directory is an effort to reduce the potential toil involved
 
 ## Examples
 
+```ts
+import { promql, Expression } from 'tsqtsq';
+```
+
 `sum`
 
 ```ts

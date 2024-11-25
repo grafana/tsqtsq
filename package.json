@@ -6,6 +6,7 @@
   "description": "A reusable and composable query library for Prometheus",
   "keywords": ["prometheus", "promql", "typescript", "query", "javascript"],
   "author": "Grafana Labs",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/grafana/tsqtsq"
@@ -20,6 +21,6 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js "
+    "build": "esbuild src/index.js --bundle --platform=node --outfile=dist/index.js "
   }
 }
