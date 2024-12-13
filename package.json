@@ -1,6 +1,6 @@
 {
   "name": "tsqtsq",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "dist/index.js",
   "license": "AGPL-3.0-only",
   "description": "A reusable and composable query library for Prometheus",
