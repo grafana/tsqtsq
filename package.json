@@ -28,6 +28,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "build": "tsc",
-    "publish": "npm run build && npm publish"
+    "deploy": "npm run build && npm publish"
   }
 }
