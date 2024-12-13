@@ -1,6 +1,6 @@
 {
   "name": "tsqtsq",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "dist/index.js",
   "license": "AGPL-3.0-only",
   "description": "A reusable and composable query library for Prometheus",
@@ -28,6 +28,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "build": "tsc",
-    "publish": "npm build && npm publish"
+    "publish": "npm run build && npm publish"
   }
 }
