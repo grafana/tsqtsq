@@ -1,7 +1,9 @@
 {
   "name": "tsqtsq",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "AGPL-3.0-only",
   "description": "A reusable and composable query library for Prometheus",
   "keywords": [
@@ -12,7 +14,6 @@
     "javascript"
   ],
   "author": "Grafana Labs",
-  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/grafana/tsqtsq.git"
