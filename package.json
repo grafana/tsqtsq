@@ -1,9 +1,23 @@
 {
   "name": "tsqtsq",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": ["dist", "index.js"],
+  "exports": {
+    "main": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "expression": {
+      "types": "./dist/expression.d.ts",
+      "default": "./dist/expression.js"
+    },
+    "promql": {
+      "types": "./dist/promql.d.ts",
+      "default": "./dist/promql.js"
+    }
+  },
   "license": "AGPL-3.0-only",
   "description": "A reusable and composable query library for Prometheus",
   "keywords": [
