@@ -61,7 +61,7 @@ export const promql = {
   unless: ({ left, right }: LogicalOpParams) => `${left} unless ${right}`,
 
   rate: ({ expr, interval = '$__rate_interval' }: Rate) => `rate(${expr}[${interval}])`,
-  increase: ({ expr, interval = '$__rate_interval' }: Increase) => `increase(${expr}[${interval}])`,
+  increase: ({ expr, interval = '$__range' }: Increase) => `increase(${expr}[${interval}])`,
 
   // Labels
   label_replace: ({ expr, newLabel, existingLabel, replacement = '$1', regex = '(.*)' }: LabelReplace) =>
