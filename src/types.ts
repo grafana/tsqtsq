@@ -58,6 +58,11 @@ export type Offset = {
 
 export type Rate = Omit<AggregateOverTime, 'range'>;
 
+export type Increase = {
+  expr: string;
+  interval?: string;
+};
+
 export type LabelReplace = {
   expr: string;
   newLabel: string;
