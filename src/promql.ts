@@ -7,9 +7,10 @@ import {
   LogicalOpParams,
   Offset,
   Rate,
-  Increase
+  Increase,
+  WorkloadLabels
 } from './types';
-import { buildOffsetString } from './utils';
+import { buildOffsetString, snippets } from './utils';
 
 export const promql = {
   x_over_time: (x: string, q: string, range = '$__range', interval = '') => {
@@ -34,10 +35,11 @@ export const promql = {
 
   offset: ({ units }: Offset) => buildOffsetString(units),
 
+  
   by: (labels?: string[]) => (labels ? ` by (${labels.join(', ')}) ` : ''),
   without: (labels?: string[]) => (labels ? ` without (${labels.join(', ')}) ` : ''),
   byOrWithout: ({ by, without }: Omit<AggregationParams, 'expr'>) => (by ? promql.by(by) : promql.without(without)),
-
+  
   // Aggregation
   sum: ({ expr, by, without }: AggregationParams) => `sum${promql.byOrWithout({ by, without })}(${expr})`,
   min: ({ expr, by, without }: AggregationParams) => `min${promql.byOrWithout({ by, without })}(${expr})`,
@@ -55,18 +57,21 @@ export const promql = {
     `topk${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
   quantile: ({ expr, by, without, parameter }: AggregateWithParameter) =>
     `quantile${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
-
+  
   and: ({ left, right }: LogicalOpParams) => `${left} and ${right}`,
   or: ({ left, right }: LogicalOpParams) => `${left} or ${right}`,
   unless: ({ left, right }: LogicalOpParams) => `${left} unless ${right}`,
-
+  
   rate: ({ expr, interval = '$__rate_interval' }: Rate) => `rate(${expr}[${interval}])`,
   increase: ({ expr, interval = '$__range' }: Increase) => `increase(${expr}[${interval}])`,
-
+  
   // Labels
   label_replace: ({ expr, newLabel, existingLabel, replacement = '$1', regex = '(.*)' }: LabelReplace) =>
     `label_replace(${expr}, "${newLabel}", "${replacement}", "${existingLabel}", "${regex}")`,
-
+  
   label_join: ({ expr, newLabel, separator = ',', labels }: LabelJoin) =>
     `label_join(${expr}, "${newLabel}", "${separator}", ${labels.map((label) => `"${label}"`).join(', ')})`,
+
+  // joins
+  podsWithWorkloads: (values: WorkloadLabels) => snippets.pods.withWorkloads(values),
 };
