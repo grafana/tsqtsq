@@ -1,5 +1,5 @@
 import { promql } from './promql';
-import { OffsetUnits, WorkloadLabels } from './types';
+import { OffsetUnits, PodsWithWorkloadLabels } from './types';
 
 export const buildOffsetString = (offset: OffsetUnits) => {
   // iterate through all units and build a string from them
@@ -14,7 +14,7 @@ export const buildOffsetString = (offset: OffsetUnits) => {
 
 export const snippets = {
   pods: {
-    withWorkloads: (values: WorkloadLabels) => {
+    withWorkloads: (values: PodsWithWorkloadLabels) => {
       let { cluster, namespace, workload, workload_type, pod, lastOverTime = false } = values;
 
       cluster = cluster || '.+';

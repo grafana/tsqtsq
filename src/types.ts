@@ -78,7 +78,7 @@ export type LabelJoin = {
   separator?: string;
 };
 
-export type WorkloadLabels = {
+export type PodsWithWorkloadLabels = {
   cluster?: string;
   namespace?: string;
   workload?: string;

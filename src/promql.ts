@@ -6,9 +6,9 @@ import {
   LabelReplace,
   LogicalOpParams,
   Offset,
+  PodsWithWorkloadLabels,
   Rate,
   Increase,
-  WorkloadLabels
 } from './types';
 import { buildOffsetString, snippets } from './utils';
 
@@ -34,7 +34,6 @@ export const promql = {
     promql.x_over_time('quantile', expr, range, interval),
 
   offset: ({ units }: Offset) => buildOffsetString(units),
-
   
   by: (labels?: string[]) => (labels ? ` by (${labels.join(', ')}) ` : ''),
   without: (labels?: string[]) => (labels ? ` without (${labels.join(', ')}) ` : ''),
@@ -57,14 +56,14 @@ export const promql = {
     `topk${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
   quantile: ({ expr, by, without, parameter }: AggregateWithParameter) =>
     `quantile${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
-  
+
   and: ({ left, right }: LogicalOpParams) => `${left} and ${right}`,
   or: ({ left, right }: LogicalOpParams) => `${left} or ${right}`,
   unless: ({ left, right }: LogicalOpParams) => `${left} unless ${right}`,
   
   rate: ({ expr, interval = '$__rate_interval' }: Rate) => `rate(${expr}[${interval}])`,
   increase: ({ expr, interval = '$__range' }: Increase) => `increase(${expr}[${interval}])`,
-  
+
   // Labels
   label_replace: ({ expr, newLabel, existingLabel, replacement = '$1', regex = '(.*)' }: LabelReplace) =>
     `label_replace(${expr}, "${newLabel}", "${replacement}", "${existingLabel}", "${regex}")`,
@@ -73,5 +72,5 @@ export const promql = {
     `label_join(${expr}, "${newLabel}", "${separator}", ${labels.map((label) => `"${label}"`).join(', ')})`,
 
   // joins
-  podsWithWorkloads: (values: WorkloadLabels) => snippets.pods.withWorkloads(values),
+  podsWithWorkloads: (values: PodsWithWorkloadLabels) => snippets.pods.withWorkloads(values),
 };
