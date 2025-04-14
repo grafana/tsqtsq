@@ -77,3 +77,12 @@ export type LabelJoin = {
   labels: string[];
   separator?: string;
 };
+
+export type WorkloadLabels = {
+  cluster?: string;
+  namespace?: string;
+  workload?: string;
+  workload_type?: string;
+  pod?: string;
+  lastOverTime: boolean;
+};
