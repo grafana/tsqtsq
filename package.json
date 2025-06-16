@@ -20,7 +20,7 @@
     "url": "git+https://github.com/grafana/tsqtsq.git"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^30.0.0",
     "esbuild": "^0.25.3",
     "jest": "^30.0.0",
     "ts-jest": "^29.2.4",
