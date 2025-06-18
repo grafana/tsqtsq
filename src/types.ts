@@ -34,7 +34,7 @@ export type AggregationParams = {
 
 export interface AggregateWithParameter extends AggregationParams {
   /** used for count_values, quantile, bottomk and topk */
-  parameter: number;
+  parameter: number | string;
 }
 
 export type LogicalOpParams = {
