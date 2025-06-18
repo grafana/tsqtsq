@@ -2,7 +2,7 @@ import { LabelSelector, LabelsWithValues, MatchingOperator } from './types';
 
 export class Expression {
   metric: string;
-  selectors = new Map<string, LabelSelector>();
+  selectors = new Map<string, LabelSelector[]>();
 
   constructor(opts: {
     metric: string;
@@ -20,22 +20,26 @@ export class Expression {
       if (value === undefined) {
         continue;
       }
-      this.selectors.set(label, {
+      this.selectors.set(label, [{
         operator: opts.defaultOperator,
         label,
         value,
-      });
+      }]);
     }
   }
 
   setSelector(selector: LabelSelector) {
-    this.selectors.set(selector.label, selector);
+    const existing = this.selectors.get(selector.label) || [];
+    existing.push(selector);
+    this.selectors.set(selector.label, existing);
     return this;
   }
 
   toString(): string {
     const selectors = Array.from(this.selectors)
-      .map(([label, selector]) => `${label}${selector.operator}"${selector.value}"`)
+      .flatMap(([label, selectorArray]) => 
+        selectorArray.map(selector => `${label}${selector.operator}"${selector.value}"`)
+      )
       .join(', ');
     return `${this.metric}{${selectors}}`;
   }
