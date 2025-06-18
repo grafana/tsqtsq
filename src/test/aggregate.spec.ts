@@ -40,16 +40,32 @@ describe('Operators: Aggregations', () => {
       expected: 'count_values(1, )',
     },
     {
+      actual: () => promql.count_values({ parameter: '$limit', expr: '' }),
+      expected: 'count_values($limit, )',
+    },
+    {
       actual: () => promql.bottomk({ parameter: 1, expr: '' }),
       expected: 'bottomk(1, )',
+    },
+    {
+      actual: () => promql.bottomk({ parameter: '$limit', expr: '' }),
+      expected: 'bottomk($limit, )',
     },
     {
       actual: () => promql.topk({ parameter: 1, expr: '' }),
       expected: 'topk(1, )',
     },
     {
+      actual: () => promql.topk({ parameter: '$limit', expr: '' }),
+      expected: 'topk($limit, )',
+    },
+    {
       actual: () => promql.quantile({ parameter: 1, expr: '' }),
       expected: 'quantile(1, )',
+    },
+    {
+      actual: () => promql.quantile({ parameter: '$limit', expr: '' }),
+      expected: 'quantile($limit, )',
     },
     {
       actual: () => promql.sum({ expr: 'test_metric{foo="bar"}' }),
