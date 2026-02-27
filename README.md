@@ -97,6 +97,52 @@ becomes
 offset 2y1d42h2m3s
 ```
 
+`arithmetic binary ops`
+
+```ts
+promql.div({ left: 'http_requests_total', right: 'http_requests_duration_seconds' });
+```
+
+becomes
+
+```
+http_requests_total / http_requests_duration_seconds
+```
+
+`vector matching with on`
+
+```ts
+promql.div({
+  left: 'http_requests_total{job="api"}',
+  right: 'http_requests_total{job="api"}',
+  on: ['instance'],
+  groupLeft: [],
+});
+```
+
+becomes
+
+```
+http_requests_total{job="api"} / on (instance) group_left http_requests_total{job="api"}
+```
+
+`composing with rate`
+
+```ts
+promql.div({
+  left: promql.rate({ expr: 'http_requests_total{code="200"}' }),
+  right: promql.rate({ expr: 'http_requests_total' }),
+  on: ['instance'],
+  groupLeft: ['job'],
+});
+```
+
+becomes
+
+```
+rate(http_requests_total{code="200"}[$__rate_interval]) / on (instance) group_left (job) rate(http_requests_total[$__rate_interval])
+```
+
 ### Using the `Expression` class
 
 The `Expression` class can be used to compose reusable PromQL expressions to be further used with the `promql` library.
