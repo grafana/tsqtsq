@@ -77,3 +77,20 @@ export type LabelJoin = {
   labels: string[];
   separator?: string;
 };
+
+export type ArithmeticBinaryOpParams = {
+  left: string;
+  right: string;
+
+  /** match on these labels; takes precedence over ignoring if both provided */
+  on?: string[];
+
+  /** match ignoring these labels; only applied when on is not specified */
+  ignoring?: string[];
+
+  /** group_left labels for many-to-one matching */
+  groupLeft?: string[];
+
+  /** group_right labels for one-to-many matching */
+  groupRight?: string[];
+};

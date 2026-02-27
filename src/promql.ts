@@ -2,12 +2,13 @@ import {
   AggregateOverTime,
   AggregateWithParameter,
   AggregationParams,
+  ArithmeticBinaryOpParams,
   LabelJoin,
   LabelReplace,
   LogicalOpParams,
   Offset,
   Rate,
-  Increase
+  Increase,
 } from './types';
 import { buildOffsetString } from './utils';
 
@@ -69,4 +70,34 @@ export const promql = {
 
   label_join: ({ expr, newLabel, separator = ',', labels }: LabelJoin) =>
     `label_join(${expr}, "${newLabel}", "${separator}", ${labels.map((label) => `"${label}"`).join(', ')})`,
+
+  // Arithmetic binary operators with vector matching
+  arithmeticBinaryOp: (op: string, { left, right, on, ignoring, groupLeft, groupRight }: ArithmeticBinaryOpParams) => {
+    const hasOn = on && on.length > 0;
+    const hasIgnoring = ignoring && ignoring.length > 0;
+
+    if ((groupLeft !== undefined || groupRight !== undefined) && !hasOn && !hasIgnoring) {
+      throw new Error('group_left/group_right require an "on" or "ignoring" clause');
+    }
+
+    let matching = '';
+    if (hasOn) {
+      matching += ` on (${on.join(', ')})`;
+    } else if (hasIgnoring) {
+      matching += ` ignoring (${ignoring.join(', ')})`;
+    }
+    if (groupLeft !== undefined) {
+      matching += groupLeft.length > 0 ? ` group_left (${groupLeft.join(', ')})` : ' group_left';
+    } else if (groupRight !== undefined) {
+      matching += groupRight.length > 0 ? ` group_right (${groupRight.join(', ')})` : ' group_right';
+    }
+    return `${left} ${op}${matching} ${right}`;
+  },
+
+  add: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('+', params),
+  sub: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('-', params),
+  mul: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('*', params),
+  div: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('/', params),
+  mod: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('%', params),
+  pow: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('^', params),
 };
