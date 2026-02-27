@@ -74,9 +74,9 @@ export const promql = {
   // Arithmetic binary operators with vector matching
   arithmeticBinaryOp: (op: string, { left, right, on, ignoring, groupLeft, groupRight }: ArithmeticBinaryOpParams) => {
     let matching = '';
-    if (on) {
+    if (on && on.length > 0) {
       matching += ` on (${on.join(', ')})`;
-    } else if (ignoring) {
+    } else if (ignoring && ignoring.length > 0) {
       matching += ` ignoring (${ignoring.join(', ')})`;
     }
     if (groupLeft !== undefined) {
