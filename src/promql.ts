@@ -12,7 +12,9 @@ import {
 } from './types';
 import { buildOffsetString } from './utils';
 
+/** Query builder with methods for composing type-safe PromQL queries. All methods return plain strings. */
 export const promql = {
+  /** @internal Helper for *_over_time functions. */
   x_over_time: (x: string, q: string, range = '$__range', interval = '') => {
     return `${x}_over_time((${q})[${range}:${interval}])`;
   },
