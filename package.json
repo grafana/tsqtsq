@@ -35,6 +35,6 @@
     "test:watch": "jest --watch",
     "build": "tsc",
     "deploy": "npm run build && npm publish",
-    "docs": "typedoc"
+    "docs": "rm -rf docs && typedoc"
   }
 }

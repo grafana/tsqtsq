@@ -1,5 +1,20 @@
 import { promql } from './promql';
 import { Expression } from './expression';
-import { MatchingOperator } from './types';
 
-export { promql, Expression, MatchingOperator };
+export { promql, Expression };
+export type {
+  MatchingOperator,
+  LabelSelector,
+  LabelsWithValues,
+  AggregateOverTime,
+  AggregationParams,
+  AggregateWithParameter,
+  LogicalOpParams,
+  OffsetUnits,
+  Offset,
+  Rate,
+  Increase,
+  LabelReplace,
+  LabelJoin,
+  ArithmeticBinaryOpParams,
+} from './types';
