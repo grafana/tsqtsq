@@ -82,10 +82,10 @@ export type ArithmeticBinaryOpParams = {
   left: string;
   right: string;
 
-  /** match on these labels (mutually exclusive with ignoring) */
+  /** match on these labels; takes precedence over ignoring if both provided */
   on?: string[];
 
-  /** match ignoring these labels (mutually exclusive with on) */
+  /** match ignoring these labels; only applied when on is not specified */
   ignoring?: string[];
 
   /** group_left labels for many-to-one matching */

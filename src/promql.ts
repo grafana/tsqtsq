@@ -73,10 +73,17 @@ export const promql = {
 
   // Arithmetic binary operators with vector matching
   arithmeticBinaryOp: (op: string, { left, right, on, ignoring, groupLeft, groupRight }: ArithmeticBinaryOpParams) => {
+    const hasOn = on && on.length > 0;
+    const hasIgnoring = ignoring && ignoring.length > 0;
+
+    if ((groupLeft !== undefined || groupRight !== undefined) && !hasOn && !hasIgnoring) {
+      throw new Error('group_left/group_right require an "on" or "ignoring" clause');
+    }
+
     let matching = '';
-    if (on && on.length > 0) {
+    if (hasOn) {
       matching += ` on (${on.join(', ')})`;
-    } else if (ignoring && ignoring.length > 0) {
+    } else if (hasIgnoring) {
       matching += ` ignoring (${ignoring.join(', ')})`;
     }
     if (groupLeft !== undefined) {

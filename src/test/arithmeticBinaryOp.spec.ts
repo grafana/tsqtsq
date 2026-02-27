@@ -107,4 +107,16 @@ describe('Operators: Arithmetic Binary Ops with Vector Matching', () => {
   ])('Generate PromQL query: $expected', ({ actual, expected }) => {
     expect(actual()).toStrictEqual(expected);
   });
+
+  it('throws when group_left is used without on/ignoring', () => {
+    expect(() => promql.div({ left: 'a', right: 'b', groupLeft: [] })).toThrow(
+      'group_left/group_right require an "on" or "ignoring" clause'
+    );
+  });
+
+  it('throws when group_right is used without on/ignoring', () => {
+    expect(() => promql.div({ left: 'a', right: 'b', groupRight: ['job'] })).toThrow(
+      'group_left/group_right require an "on" or "ignoring" clause'
+    );
+  });
 });
