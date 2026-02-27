@@ -1,0 +1,10 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "name": "tsqtsq",
+  "projectDocuments": ["docs-src/*.md"],
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeInternal": true
+}
