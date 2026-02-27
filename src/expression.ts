@@ -1,5 +1,6 @@
 import { LabelSelector, LabelsWithValues, MatchingOperator } from './types';
 
+/** Composable PromQL metric selector with label matching. Use toString() or String() to produce the selector string. */
 export class Expression {
   metric: string;
   selectors = new Map<string, LabelSelector[]>();

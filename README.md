@@ -1,5 +1,7 @@
 # tsqtsq - A PromQL Query Library
 
+[**API Docs**](https://grafana.github.io/tsqtsq/)
+
 `tsqtsq` aims to make hard-coded PromQL queries easier to read and maintain. Wide-ranging changes and common "query snippets" have varying approaches and often impact query readability. By introducing typed, templated queries, changing common expressions and debugging becomes much easier.
 
 Consider the following use cases:
