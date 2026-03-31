@@ -28,7 +28,7 @@
     "jest": "30.3.0",
     "ts-jest": "29.4.6",
     "typedoc": "0.28.18",
-    "typescript": "5.9.3"
+    "typescript": "6.0.2"
   },
   "scripts": {
     "test": "jest",
