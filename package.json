@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/jest": "30.0.0",
-    "esbuild": "0.27.4",
+    "esbuild": "0.28.0",
     "jest": "30.3.0",
     "ts-jest": "29.4.9",
     "typedoc": "0.28.18",
