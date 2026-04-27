@@ -89,9 +89,9 @@ export const promql = {
       matching += ` ignoring (${ignoring.join(', ')})`;
     }
     if (groupLeft !== undefined) {
-      matching += groupLeft.length > 0 ? ` group_left (${groupLeft.join(', ')})` : ' group_left';
+      matching += groupLeft.length > 0 ? ` group_left (${groupLeft.join(', ')})` : ' group_left()';
     } else if (groupRight !== undefined) {
-      matching += groupRight.length > 0 ? ` group_right (${groupRight.join(', ')})` : ' group_right';
+      matching += groupRight.length > 0 ? ` group_right (${groupRight.join(', ')})` : ' group_right()';
     }
     return `${left} ${op}${matching} ${right}`;
   },

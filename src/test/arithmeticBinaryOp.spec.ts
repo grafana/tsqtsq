@@ -59,7 +59,7 @@ describe('Operators: Arithmetic Binary Ops with Vector Matching', () => {
     // group_left without labels
     {
       actual: () => promql.div({ left: 'metric_a', right: 'metric_b', on: ['instance'], groupLeft: [] }),
-      expected: 'metric_a / on (instance) group_left metric_b',
+      expected: 'metric_a / on (instance) group_left() metric_b',
     },
 
     // group_left with labels
@@ -76,7 +76,7 @@ describe('Operators: Arithmetic Binary Ops with Vector Matching', () => {
     // group_right without labels
     {
       actual: () => promql.div({ left: 'metric_a', right: 'metric_b', on: ['instance'], groupRight: [] }),
-      expected: 'metric_a / on (instance) group_right metric_b',
+      expected: 'metric_a / on (instance) group_right() metric_b',
     },
 
     // group_right with labels
@@ -102,7 +102,7 @@ describe('Operators: Arithmetic Binary Ops with Vector Matching', () => {
           groupLeft: [],
         }),
       expected:
-        'rate(http_requests_total{code="200"}[$__rate_interval]) / on (instance) group_left rate(http_requests_total[$__rate_interval])',
+        'rate(http_requests_total{code="200"}[$__rate_interval]) / on (instance) group_left() rate(http_requests_total[$__rate_interval])',
     },
   ])('Generate PromQL query: $expected', ({ actual, expected }) => {
     expect(actual()).toStrictEqual(expected);
