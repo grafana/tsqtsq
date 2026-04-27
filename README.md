@@ -125,7 +125,7 @@ promql.div({
 becomes
 
 ```
-http_requests_total{job="api"} / on (instance) group_left http_requests_total{job="api"}
+http_requests_total{job="api"} / on (instance) group_left() http_requests_total{job="api"}
 ```
 
 `composing with rate`
