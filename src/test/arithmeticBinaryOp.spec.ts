@@ -73,10 +73,34 @@ describe('Operators: Arithmetic Binary Ops with Vector Matching', () => {
       expected: 'metric_a * on (instance) group_left (job, env) metric_b',
     },
 
+    // group_left() with right-hand side starting with ( — regression: bare group_left would cause PromQL parser ambiguity
+    {
+      actual: () =>
+        promql.mul({
+          left: 'kube_pod_info',
+          right: '(k8s_pod_phase{phase="Running"} <= bool 2)',
+          on: ['pod', 'namespace'],
+          groupLeft: [],
+        }),
+      expected: 'kube_pod_info * on (pod, namespace) group_left() (k8s_pod_phase{phase="Running"} <= bool 2)',
+    },
+
     // group_right without labels
     {
       actual: () => promql.div({ left: 'metric_a', right: 'metric_b', on: ['instance'], groupRight: [] }),
       expected: 'metric_a / on (instance) group_right() metric_b',
+    },
+
+    // group_right() with right-hand side starting with ( — regression: bare group_right would cause PromQL parser ambiguity
+    {
+      actual: () =>
+        promql.mul({
+          left: 'kube_pod_info',
+          right: '(k8s_pod_phase{phase="Running"} <= bool 2)',
+          on: ['pod', 'namespace'],
+          groupRight: [],
+        }),
+      expected: 'kube_pod_info * on (pod, namespace) group_right() (k8s_pod_phase{phase="Running"} <= bool 2)',
     },
 
     // group_right with labels
