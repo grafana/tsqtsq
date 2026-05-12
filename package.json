@@ -22,6 +22,16 @@
     "type": "git",
     "url": "git+https://github.com/grafana/tsqtsq.git"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "npm",
+      "onFail": "error"
+    }
+  },
   "devDependencies": {
     "@types/jest": "30.0.0",
     "esbuild": "0.28.0",
