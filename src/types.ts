@@ -43,10 +43,16 @@ export interface AggregateWithParameter extends AggregationParams {
   parameter: number | string;
 }
 
-/** Parameters for logical set operators (and, or, unless). */
+/** Parameters for logical set operators (and, or, unless) with optional vector matching. */
 export type LogicalOpParams = {
   left: string;
   right: string;
+
+  /** match on these labels; takes precedence over ignoring if both provided */
+  on?: string[];
+
+  /** match ignoring these labels; only applied when on is not specified */
+  ignoring?: string[];
 };
 
 /** Time duration units for PromQL offset modifiers. */
