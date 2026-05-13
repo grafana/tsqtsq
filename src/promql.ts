@@ -59,9 +59,9 @@ export const promql = {
   quantile: ({ expr, by, without, parameter }: AggregateWithParameter) =>
     `quantile${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
 
-  and: ({ left, right }: LogicalOpParams) => `${left} and ${right}`,
-  or: ({ left, right }: LogicalOpParams) => `${left} or ${right}`,
-  unless: ({ left, right }: LogicalOpParams) => `${left} unless ${right}`,
+  and: (params: LogicalOpParams) => promql.arithmeticBinaryOp('and', params),
+  or: (params: LogicalOpParams) => promql.arithmeticBinaryOp('or', params),
+  unless: (params: LogicalOpParams) => promql.arithmeticBinaryOp('unless', params),
 
   rate: ({ expr, interval = '$__rate_interval' }: Rate) => `rate(${expr}[${interval}])`,
   increase: ({ expr, interval = '$__range' }: Increase) => `increase(${expr}[${interval}])`,
