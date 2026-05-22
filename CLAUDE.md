@@ -6,10 +6,10 @@ tsqtsq is a TypeScript library for creating reusable, type-safe PromQL (Promethe
 
 ## Commands
 
-- `npm run test` — Run all tests (Jest)
-- `npm run test:watch` — Run tests in watch mode
-- `npm run build` — Compile TypeScript to `dist/`
-- `npm run deploy` — Build and publish to npm
+- `pnpm run test` — Run all tests (Jest)
+- `pnpm run test:watch` — Run tests in watch mode
+- `pnpm run build` — Compile TypeScript to `dist/`
+- `pnpm run deploy` — Build and publish to npm
 
 ## Architecture
 
@@ -38,7 +38,7 @@ tsqtsq is a TypeScript library for creating reusable, type-safe PromQL (Promethe
 ## CI
 
 - GitHub Actions on push to `main` and all PRs
-- Node 20, runs `npm install && npm run test`
+- Node 24, runs `pnpm install --frozen-lockfile && pnpm run test`
 
 ## License
 
