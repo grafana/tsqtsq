@@ -114,3 +114,9 @@ export type ArithmeticBinaryOpParams = {
   /** group_right labels for one-to-many matching */
   groupRight?: string[];
 };
+
+/** Parameters for comparison binary operators (==, !=, >, <, >=, <=). */
+export type ComparisonBinaryOpParams = ArithmeticBinaryOpParams & {
+  /** emit the `bool` modifier so the comparison returns 0/1 instead of filtering. */
+  bool?: boolean;
+};
