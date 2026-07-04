@@ -3,6 +3,7 @@ import {
   AggregateWithParameter,
   AggregationParams,
   ArithmeticBinaryOpParams,
+  ComparisonBinaryOpParams,
   LabelJoin,
   LabelReplace,
   LogicalOpParams,
@@ -59,9 +60,9 @@ export const promql = {
   quantile: ({ expr, by, without, parameter }: AggregateWithParameter) =>
     `quantile${promql.byOrWithout({ by, without })}(${parameter}, ${expr})`,
 
-  and: (params: LogicalOpParams) => promql.arithmeticBinaryOp('and', params),
-  or: (params: LogicalOpParams) => promql.arithmeticBinaryOp('or', params),
-  unless: (params: LogicalOpParams) => promql.arithmeticBinaryOp('unless', params),
+  and: (params: LogicalOpParams) => promql.binaryOp('and', params),
+  or: (params: LogicalOpParams) => promql.binaryOp('or', params),
+  unless: (params: LogicalOpParams) => promql.binaryOp('unless', params),
 
   rate: ({ expr, interval = '$__rate_interval' }: Rate) => `rate(${expr}[${interval}])`,
   increase: ({ expr, interval = '$__range' }: Increase) => `increase(${expr}[${interval}])`,
@@ -73,8 +74,8 @@ export const promql = {
   label_join: ({ expr, newLabel, separator = ',', labels }: LabelJoin) =>
     `label_join(${expr}, "${newLabel}", "${separator}", ${labels.map((label) => `"${label}"`).join(', ')})`,
 
-  // Arithmetic binary operators with vector matching
-  arithmeticBinaryOp: (op: string, { left, right, on, ignoring, groupLeft, groupRight }: ArithmeticBinaryOpParams) => {
+  // Shared helper for arithmetic, logical and comparison binary operators with vector matching
+  binaryOp: (op: string, { left, right, on, ignoring, groupLeft, groupRight, bool }: ComparisonBinaryOpParams) => {
     const hasOn = on && on.length > 0;
     const hasIgnoring = ignoring && ignoring.length > 0;
 
@@ -93,13 +94,20 @@ export const promql = {
     } else if (groupRight !== undefined) {
       matching += groupRight.length > 0 ? ` group_right (${groupRight.join(', ')})` : ' group_right()';
     }
-    return `${left} ${op}${matching} ${right}`;
+    return `${left} ${op}${bool ? ' bool' : ''}${matching} ${right}`;
   },
 
-  add: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('+', params),
-  sub: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('-', params),
-  mul: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('*', params),
-  div: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('/', params),
-  mod: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('%', params),
-  pow: (params: ArithmeticBinaryOpParams) => promql.arithmeticBinaryOp('^', params),
+  add: (params: ArithmeticBinaryOpParams) => promql.binaryOp('+', params),
+  sub: (params: ArithmeticBinaryOpParams) => promql.binaryOp('-', params),
+  mul: (params: ArithmeticBinaryOpParams) => promql.binaryOp('*', params),
+  div: (params: ArithmeticBinaryOpParams) => promql.binaryOp('/', params),
+  mod: (params: ArithmeticBinaryOpParams) => promql.binaryOp('%', params),
+  pow: (params: ArithmeticBinaryOpParams) => promql.binaryOp('^', params),
+
+  eq: (params: ComparisonBinaryOpParams) => promql.binaryOp('==', params),
+  neq: (params: ComparisonBinaryOpParams) => promql.binaryOp('!=', params),
+  gt: (params: ComparisonBinaryOpParams) => promql.binaryOp('>', params),
+  lt: (params: ComparisonBinaryOpParams) => promql.binaryOp('<', params),
+  gte: (params: ComparisonBinaryOpParams) => promql.binaryOp('>=', params),
+  lte: (params: ComparisonBinaryOpParams) => promql.binaryOp('<=', params),
 };

@@ -17,4 +17,5 @@ export type {
   LabelReplace,
   LabelJoin,
   ArithmeticBinaryOpParams,
+  ComparisonBinaryOpParams,
 } from './types';
