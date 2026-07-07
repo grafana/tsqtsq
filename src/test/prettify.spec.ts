@@ -91,6 +91,41 @@ describe('prettify', () => {
         }),
       expected: 'http_requests_total / http_requests_duration_seconds',
     },
+    {
+      name: 'preserves the $__rate_interval template variable in a range selector',
+      actual: () => prettify({ expr: promql.rate({ expr: 'foo{bar="baz"}' }) }),
+      expected: 'rate(foo{bar="baz"}[$__rate_interval])',
+    },
+    {
+      name: 'preserves template variables in subquery ranges',
+      actual: () => prettify({ expr: promql.avg_over_time({ expr: 'up' }) }),
+      expected: 'avg_over_time((up)[$__range:])',
+    },
+    {
+      name: 'preserves template variables after offset',
+      actual: () => prettify({ expr: 'sum(foo offset $__interval)' }),
+      expected: 'sum(foo offset $__interval)',
+    },
+    {
+      name: 'preserves ${...} and dashboard variables in vector and label positions',
+      actual: () => prettify({ expr: 'sum by (pod) (rate(${metric}{cluster="$cluster"}[$__rate_interval]))' }),
+      expected: 'sum by (pod) (rate(${metric}{cluster="$cluster"}[$__rate_interval]))',
+    },
+    {
+      name: 'breaks expressions containing template variables onto indented lines',
+      actual: () =>
+        prettify({
+          expr: promql.sum({
+            by: ['cluster', 'namespace', 'workload', 'workload_type', 'pod'],
+            expr: promql.rate({ expr: 'network_transmit_dropped_total{job="$job"}' }),
+          }),
+        }),
+      expected: [
+        'sum by (cluster, namespace, workload, workload_type, pod) (',
+        '  rate(network_transmit_dropped_total{job="$job"}[$__rate_interval])',
+        ')',
+      ].join('\n'),
+    },
   ])('$name', ({ actual, expected }) => {
     expect(actual()).toStrictEqual(expected);
   });
@@ -98,7 +133,16 @@ describe('prettify', () => {
   it.each([
     { expr: 'sum(foo', name: 'missing closing parenthesis' },
     { expr: 'sum foo)', name: 'missing opening parenthesis' },
-  ])('throws on unbalanced parentheses: $name', ({ expr }) => {
-    expect(() => prettify({ expr })).toThrow('Unbalanced parentheses');
+    { expr: 'sum by (foo) (}', name: 'stray closing brace' },
+  ])('throws on invalid PromQL: $name', ({ expr }) => {
+    expect(() => prettify({ expr })).toThrow('Unable to parse PromQL expression');
+  });
+
+  it.each([
+    { options: { expr: 'up', indent: -1 }, message: 'indent must be a non-negative integer', name: 'negative indent' },
+    { options: { expr: 'up', indent: 1.5 }, message: 'indent must be a non-negative integer', name: 'fractional indent' },
+    { options: { expr: 'up', maxWidth: 0 }, message: 'maxWidth must be a positive integer', name: 'zero maxWidth' },
+  ])('throws on invalid options: $name', ({ options, message }) => {
+    expect(() => prettify(options)).toThrow(message);
   });
 });

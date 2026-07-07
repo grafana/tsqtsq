@@ -40,5 +40,9 @@
     "build": "tsc",
     "deploy": "pnpm run build && pnpm publish",
     "docs": "rm -rf docs && typedoc"
+  },
+  "dependencies": {
+    "@lezer/lr": "^1.4.10",
+    "@prometheus-io/lezer-promql": "^0.313.0"
   }
 }

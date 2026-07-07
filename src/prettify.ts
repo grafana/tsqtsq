@@ -1,3 +1,5 @@
+import { parser } from '@prometheus-io/lezer-promql';
+
 export interface PrettifyOptions {
   /** The expression to pretty-print. */
   expr: string;
@@ -13,110 +15,111 @@ interface Group {
   children: Node[];
 }
 
+interface Substitution {
+  placeholder: string;
+  original: string;
+}
+
+/** Matches Grafana template variables: `$__rate_interval`, `$var`, `${var}`, `${var:csv}` and legacy `[[var]]`. */
+const TEMPLATE_VARIABLE_REGEX = /\$\{[^}]*\}|\[\[[^\]]+\]\]|\$[A-Za-z_][A-Za-z0-9_]*/g;
+
 /**
- * Parses an expression into a tree of text and parenthesized groups.
- * Quoted strings are treated as opaque text so parentheses and commas
- * inside label values (e.g. regex matchers) are never interpreted.
+ * Returns true when the template variable at `index` sits where PromQL expects
+ * a duration: inside a range/subquery selector (after `[` or `:`) or after the
+ * `offset` keyword.
  */
-const parse = (expr: string): Node[] => {
+const isDurationContext = (expr: string, index: number): boolean => {
+  let i = index - 1;
+  while (i >= 0 && /\s/.test(expr[i])) {
+    i--;
+  }
+  if (i < 0) {
+    return false;
+  }
+  if (expr[i] === '[' || expr[i] === ':') {
+    return true;
+  }
+  const preceding = expr.slice(0, i + 1);
+  return /(^|[^A-Za-z0-9_])offset$/.test(preceding);
+};
+
+/**
+ * Grafana template variables are not valid PromQL, so they are masked with
+ * syntactically valid placeholders before parsing (a duration literal in
+ * duration positions, an identifier elsewhere) and restored after rendering.
+ */
+const maskTemplateVariables = (expr: string): { masked: string; substitutions: Substitution[] } => {
+  const substitutions: Substitution[] = [];
+  let counter = 0;
+  const nextPlaceholder = (duration: boolean): string => {
+    let candidate: string;
+    do {
+      candidate = duration ? `${100000 + counter}m` : `__tsqtsq_var_${counter}__`;
+      counter++;
+    } while (expr.includes(candidate));
+    return candidate;
+  };
+  const masked = expr.replace(TEMPLATE_VARIABLE_REGEX, (match, index: number) => {
+    const placeholder = nextPlaceholder(isDurationContext(expr, index));
+    substitutions.push({ placeholder, original: match });
+    return placeholder;
+  });
+  return { masked, substitutions };
+};
+
+const restoreTemplateVariables = (text: string, substitutions: Substitution[]): string =>
+  substitutions.reduce((result, { placeholder, original }) => result.split(placeholder).join(original), text);
+
+/**
+ * Parses an expression with the lezer PromQL parser and reduces the syntax
+ * tree to a tree of text and breakable parenthesized groups. Function call
+ * bodies and paren expressions are the only groups that may be broken onto
+ * multiple lines; grouping labels (e.g. `by (...)`) stay part of the
+ * surrounding text.
+ */
+const parseExpression = (expr: string): Node[] => {
+  const tree = parser.parse(expr);
   const root: Group = { children: [] };
   const stack: Group[] = [root];
-  let text = '';
+  let pos = 0;
+  let hasError = false;
 
-  const flushText = () => {
-    if (text.length > 0) {
-      stack[stack.length - 1].children.push(text);
-      text = '';
-    }
-  };
-
-  let i = 0;
-  while (i < expr.length) {
-    const char = expr[i];
-
-    if (char === '"' || char === "'" || char === '`') {
-      const quote = char;
-      text += char;
-      i++;
-      while (i < expr.length) {
-        text += expr[i];
-        if (expr[i] === '\\' && i + 1 < expr.length) {
-          text += expr[i + 1];
-          i += 2;
-          continue;
-        }
-        if (expr[i] === quote) {
-          i++;
-          break;
-        }
-        i++;
+  tree.iterate({
+    enter: (node) => {
+      if (node.type.isError) {
+        hasError = true;
+        return false;
       }
-      continue;
-    }
-
-    // Label matchers ({...}) and range selectors ([...]) are kept as opaque
-    // text so the commas and colons inside them are never treated as
-    // top-level argument separators.
-    if (char === '{' || char === '[') {
-      const close = char === '{' ? '}' : ']';
-      let depth = 0;
-      while (i < expr.length) {
-        const inner = expr[i];
-        if (inner === '"' || inner === "'" || inner === '`') {
-          const quote = inner;
-          text += inner;
-          i++;
-          while (i < expr.length) {
-            text += expr[i];
-            if (expr[i] === '\\' && i + 1 < expr.length) {
-              text += expr[i + 1];
-              i += 2;
-              continue;
-            }
-            if (expr[i] === quote) {
-              i++;
-              break;
-            }
-            i++;
-          }
-          continue;
+      if (node.name === 'FunctionCallBody' || node.name === 'ParenExpr') {
+        const current = stack[stack.length - 1];
+        if (node.from > pos) {
+          current.children.push(expr.slice(pos, node.from));
         }
-        text += inner;
-        if (inner === char) {
-          depth++;
-        } else if (inner === close) {
-          depth--;
-          if (depth === 0) {
-            i++;
-            break;
-          }
+        const group: Group = { children: [] };
+        current.children.push(group);
+        stack.push(group);
+        pos = node.from + 1;
+      }
+      return undefined;
+    },
+    leave: (node) => {
+      if (node.name === 'FunctionCallBody' || node.name === 'ParenExpr') {
+        const current = stack[stack.length - 1];
+        if (node.to - 1 > pos) {
+          current.children.push(expr.slice(pos, node.to - 1));
         }
-        i++;
+        stack.pop();
+        pos = node.to;
       }
-      continue;
-    }
+    },
+  });
 
-    if (char === '(') {
-      flushText();
-      const group: Group = { children: [] };
-      stack[stack.length - 1].children.push(group);
-      stack.push(group);
-    } else if (char === ')') {
-      if (stack.length === 1) {
-        throw new Error(`Unbalanced parentheses in expression: ${expr}`);
-      }
-      flushText();
-      stack.pop();
-    } else {
-      text += char;
-    }
-    i++;
+  if (hasError) {
+    throw new Error('Unable to parse PromQL expression');
   }
-
-  if (stack.length > 1) {
-    throw new Error(`Unbalanced parentheses in expression: ${expr}`);
+  if (pos < expr.length) {
+    root.children.push(expr.slice(pos));
   }
-  flushText();
   return root.children;
 };
 
@@ -125,7 +128,7 @@ const flatten = (nodes: Node[]): string =>
 
 /**
  * Splits a text node on commas that are not inside quoted strings, label
- * matchers or range selectors.
+ * matchers, range selectors or grouping labels (e.g. `by (...)`).
  */
 const splitTopLevel = (text: string): string[] => {
   const pieces: string[] = [];
@@ -153,9 +156,9 @@ const splitTopLevel = (text: string): string[] => {
       }
       continue;
     }
-    if (char === '{' || char === '[') {
+    if (char === '{' || char === '[' || char === '(') {
       depth++;
-    } else if (char === '}' || char === ']') {
+    } else if (char === '}' || char === ']' || char === ')') {
       depth--;
     } else if (char === ',' && depth === 0) {
       pieces.push(piece);
@@ -249,10 +252,23 @@ const renderGroupContent = (nodes: Node[], level: number, indent: number, maxWid
  * exceed the maximum line width onto indented lines. Expressions that fit
  * on a single line are returned unchanged.
  *
+ * The expression is parsed with `@prometheus-io/lezer-promql`. Grafana
+ * template variables (e.g. `$__rate_interval`, `${cluster}`) are supported
+ * even though they are not valid PromQL. Throws if the expression cannot be
+ * parsed or if the options are invalid.
+ *
  * ```ts
  * prettify({ expr: promql.sum({ expr: '...', by: ['cluster'] }) });
  * ```
  */
 export const prettify = ({ expr, indent = 2, maxWidth = 80 }: PrettifyOptions): string => {
-  return renderSequence(parse(expr), 0, indent, maxWidth);
+  if (!Number.isInteger(indent) || indent < 0) {
+    throw new Error(`indent must be a non-negative integer, got: ${indent}`);
+  }
+  if (!Number.isInteger(maxWidth) || maxWidth < 1) {
+    throw new Error(`maxWidth must be a positive integer, got: ${maxWidth}`);
+  }
+  const { masked, substitutions } = maskTemplateVariables(expr);
+  const rendered = renderSequence(parseExpression(masked), 0, indent, maxWidth);
+  return restoreTemplateVariables(rendered, substitutions);
 };

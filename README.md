@@ -179,6 +179,8 @@ Expressions that already fit on one line are returned unchanged. The indentation
 prettify({ expr: myQuery, indent: 4, maxWidth: 120 });
 ```
 
+Expressions are parsed with [`@prometheus-io/lezer-promql`](https://www.npmjs.com/package/@prometheus-io/lezer-promql). Grafana [template variables](https://grafana.com/docs/grafana/latest/visualizations/dashboards/variables/global-variables/) such as `$__rate_interval`, `$job` and `${cluster}` are supported even though they are not valid PromQL. `prettify` throws an `Error` if the expression cannot be parsed or if `indent`/`maxWidth` are invalid.
+
 ### Using the `Expression` class
 
 The `Expression` class can be used to compose reusable PromQL expressions to be further used with the `promql` library.
