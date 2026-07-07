@@ -147,7 +147,7 @@ rate(http_requests_total{code="200"}[$__rate_interval]) / on (instance) group_le
 
 ### Pretty-printing expressions
 
-By default all queries render on a single line. The `prettify` helper reformats an expression for readability, breaking parenthesized groups that exceed the maximum line width (80 characters by default) onto indented lines:
+By default all queries render on a single line. The `prettify` helper reformats an expression for readability, breaking parenthesized groups and binary operations that exceed the maximum line width (80 characters by default) onto indented lines:
 
 ```ts
 import { prettify, promql } from 'tsqtsq';

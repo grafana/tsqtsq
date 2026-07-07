@@ -4,7 +4,6 @@ import { MatchingOperator } from './types';
 import { prettify } from './prettify';
 
 export { promql, Expression, MatchingOperator, prettify };
-export type { PrettifyOptions } from './prettify';
 export type {
   LabelSelector,
   LabelsWithValues,
@@ -20,4 +19,5 @@ export type {
   LabelJoin,
   ArithmeticBinaryOpParams,
   ComparisonBinaryOpParams,
+  PrettifyOptions,
 } from './types';

@@ -126,6 +126,60 @@ describe('prettify', () => {
         ')',
       ].join('\n'),
     },
+    {
+      name: 'renders zero-argument function bodies as () even on overflowing lines',
+      actual: () => prettify({ expr: 'time()', maxWidth: 3 }),
+      expected: 'time()',
+    },
+    {
+      name: 'breaks long binary operations at the operator',
+      actual: () =>
+        prettify({
+          expr: promql.div({
+            left: promql.rate({ expr: 'http_requests_total{code="200"}' }),
+            right: promql.rate({ expr: 'http_errors_total{code="500"}' }),
+          }),
+        }),
+      expected: [
+        'rate(http_requests_total{code="200"}[$__rate_interval])',
+        '/ rate(http_errors_total{code="500"}[$__rate_interval])',
+      ].join('\n'),
+    },
+    {
+      name: 'keeps vector-matching modifiers with the operator when breaking',
+      actual: () =>
+        prettify({
+          expr: promql.div({
+            left: 'aaa_total{job="api"}',
+            right: 'bbb_total{job="api"}',
+            on: ['instance'],
+            groupLeft: [],
+          }),
+          maxWidth: 40,
+        }),
+      expected: ['aaa_total{job="api"}', '/ on (instance) group_left() bbb_total{job="api"}'].join('\n'),
+    },
+    {
+      name: 'breaks binary operations inside broken groups with indentation',
+      actual: () =>
+        prettify({
+          expr: 'sum by (pod) (metric_a{cluster="x"} + metric_b{cluster="x"})',
+          maxWidth: 40,
+        }),
+      expected: [
+        'sum by (pod) (',
+        '  metric_a{cluster="x"}',
+        '  + metric_b{cluster="x"}',
+        ')',
+      ].join('\n'),
+    },
+    {
+      name: 'measures line width against the restored variable text, not the placeholder',
+      // The real line is 84 chars with $__rate_interval restored; a shorter
+      // placeholder would make it appear to fit within 80 and stay inline.
+      actual: () => prettify({ expr: `rate(${'m'.repeat(60)}[$__rate_interval])` }),
+      expected: ['rate(', `  ${'m'.repeat(60)}[$__rate_interval]`, ')'].join('\n'),
+    },
   ])('$name', ({ actual, expected }) => {
     expect(actual()).toStrictEqual(expected);
   });
