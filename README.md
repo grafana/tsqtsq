@@ -145,6 +145,40 @@ becomes
 rate(http_requests_total{code="200"}[$__rate_interval]) / on (instance) group_left (job) rate(http_requests_total[$__rate_interval])
 ```
 
+### Pretty-printing expressions
+
+By default all queries render on a single line. The `prettify` helper reformats an expression for readability, breaking parenthesized groups that exceed the maximum line width (80 characters by default) onto indented lines:
+
+```ts
+import { prettify, promql } from 'tsqtsq';
+
+prettify({
+  expr: promql.sum({
+    by: ['cluster', 'namespace', 'workload', 'workload_type', 'pod'],
+    expr: promql.max({
+      by: ['cluster', 'namespace', 'pod', 'interface'],
+      expr: promql.rate({ expr: 'container_network_transmit_packets_dropped_total{}' }),
+    }),
+  }),
+});
+```
+
+becomes
+
+```
+sum by (cluster, namespace, workload, workload_type, pod) (
+  max by (cluster, namespace, pod, interface) (
+    rate(container_network_transmit_packets_dropped_total{}[$__rate_interval])
+  )
+)
+```
+
+Expressions that already fit on one line are returned unchanged. The indentation width and line width are configurable via `indent` and `maxWidth`:
+
+```ts
+prettify({ expr: myQuery, indent: 4, maxWidth: 120 });
+```
+
 ### Using the `Expression` class
 
 The `Expression` class can be used to compose reusable PromQL expressions to be further used with the `promql` library.
