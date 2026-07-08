@@ -107,6 +107,40 @@ describe('prettify', () => {
       expected: 'sum(foo offset $__interval)',
     },
     {
+      // Regression: placeholders v0..v11 are generated, where v1 is a substring
+      // of v10/v11. Restoring in first-occurrence order corrupted $jj and $kkkk.
+      name: 'restores overlapping identifier placeholders without corruption',
+      actual: () =>
+        prettify({
+          expr:
+            'sum(metric{' +
+            ['$aa', '$a', '$b', '$c', '$d', '$e', '$f', '$g', '$h', '$i', '$jj', '$kkkk']
+              .map((v, i) => `l${i}="${v}"`)
+              .join(',') +
+            '})',
+          maxWidth: 500,
+        }),
+      expected:
+        'sum(metric{l0="$aa",l1="$a",l2="$b",l3="$c",l4="$d",l5="$e",l6="$f",l7="$g",l8="$h",l9="$i",l10="$jj",l11="$kkkk"})',
+    },
+    {
+      // Regression: duration placeholders (e.g. 0m) can be substrings of longer
+      // ones (e.g. 10m), which must not corrupt restored durations.
+      name: 'restores overlapping duration placeholders without corruption',
+      actual: () =>
+        prettify({
+          expr:
+            'sum(' +
+            ['$a', '$b', '$c', '$d', '$e', '$f', '$g', '$h', '$i', '$jj', '$kkkkk']
+              .map((v, i) => `m${i}[${v}]`)
+              .join(' + ') +
+            ')',
+          maxWidth: 500,
+        }),
+      expected:
+        'sum(m0[$a] + m1[$b] + m2[$c] + m3[$d] + m4[$e] + m5[$f] + m6[$g] + m7[$h] + m8[$i] + m9[$jj] + m10[$kkkkk])',
+    },
+    {
       name: 'preserves ${...} and dashboard variables in vector and label positions',
       actual: () => prettify({ expr: 'sum by (pod) (rate(${metric}{cluster="$cluster"}[$__rate_interval]))' }),
       expected: 'sum by (pod) (rate(${metric}{cluster="$cluster"}[$__rate_interval]))',

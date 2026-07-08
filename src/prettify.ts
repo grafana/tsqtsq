@@ -77,8 +77,16 @@ const maskTemplateVariables = (expr: string): { masked: string; substitutions: S
   return { masked, substitutions };
 };
 
+/**
+ * Restores masked placeholders to their original template-variable text.
+ * Placeholders are restored longest-first so that a shorter placeholder can
+ * never match inside a longer one (e.g. `v1` inside `v10`, or `0m` inside
+ * `10m`), which would otherwise corrupt the output.
+ */
 const restoreTemplateVariables = (text: string, substitutions: Substitution[]): string =>
-  substitutions.reduce((result, { placeholder, original }) => result.split(placeholder).join(original), text);
+  [...substitutions]
+    .sort((a, b) => b.placeholder.length - a.placeholder.length)
+    .reduce((result, { placeholder, original }) => result.split(placeholder).join(original), text);
 
 /**
  * Parses an expression with the lezer PromQL parser and reduces the syntax
