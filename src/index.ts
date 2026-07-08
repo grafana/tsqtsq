@@ -1,8 +1,9 @@
 import { promql } from './promql';
 import { Expression } from './expression';
 import { MatchingOperator } from './types';
+import { prettify } from './prettify';
 
-export { promql, Expression, MatchingOperator };
+export { promql, Expression, MatchingOperator, prettify };
 export type {
   LabelSelector,
   LabelsWithValues,
@@ -18,4 +19,5 @@ export type {
   LabelJoin,
   ArithmeticBinaryOpParams,
   ComparisonBinaryOpParams,
+  PrettifyOptions,
 } from './types';

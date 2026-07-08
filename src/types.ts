@@ -120,3 +120,15 @@ export type ComparisonBinaryOpParams = ArithmeticBinaryOpParams & {
   /** emit the `bool` modifier so the comparison returns 0/1 instead of filtering. */
   bool?: boolean;
 };
+
+/** Options for the prettify helper. */
+export type PrettifyOptions = {
+  /** the expression to pretty-print */
+  expr: string;
+
+  /** number of spaces per indentation level; defaults to 2 */
+  indent?: number;
+
+  /** maximum line width before an expression is broken onto multiple lines; defaults to 80 */
+  maxWidth?: number;
+};
