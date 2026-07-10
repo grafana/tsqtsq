@@ -42,4 +42,4 @@ tsqtsq is a TypeScript library for creating reusable, type-safe PromQL (Promethe
 
 ## License
 
-AGPL-3.0-only
+Apache-2.0
