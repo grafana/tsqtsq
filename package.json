@@ -37,6 +37,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
+    "generate:fixtures": "node scripts/generate-fixtures.mjs",
     "build": "tsc",
     "deploy": "pnpm run build && pnpm publish",
     "docs": "rm -rf docs && typedoc"
