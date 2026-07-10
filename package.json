@@ -8,7 +8,7 @@
     "index.js"
   ],
   "exports": "./dist/index.js",
-  "license": "AGPL-3.0-only",
+  "license": "Apache-2.0",
   "description": "A reusable and composable query library for Prometheus",
   "keywords": [
     "prometheus",
