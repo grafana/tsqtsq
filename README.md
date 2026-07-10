@@ -2,6 +2,11 @@
 
 [**API Docs**](https://grafana.github.io/tsqtsq/)
 
+> Looking for Jsonnet? The same API is available as a Jsonnet library for
+> monitoring mixins: see [`jsonnet/`](./jsonnet/). It is kept behaviourally
+> identical to the TypeScript implementation by a conformance corpus generated
+> from this repo's test suite.
+
 `tsqtsq` aims to make hard-coded PromQL queries easier to read and maintain. Wide-ranging changes and common "query snippets" have varying approaches and often impact query readability. By introducing typed, templated queries, changing common expressions and debugging becomes much easier.
 
 Consider the following use cases:
