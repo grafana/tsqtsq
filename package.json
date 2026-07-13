@@ -22,7 +22,7 @@
     "type": "git",
     "url": "git+https://github.com/grafana/tsqtsq.git"
   },
-  "packageManager": "pnpm@11.9.0+sha512.bd682d5d03fe525ef7c9fd6780c6884d1e756ac4c9c9fe00c538782824310dcf90e3ddc4f53835f06dfaebd5085e41855e0bcbb3b60de2ac5bbab89e5036f03b",
+  "packageManager": "pnpm@11.11.0+sha512.4463f65fd80ed80d69bc1d4bf163ee94f605c7380fc318bb5b2ebe15f8cd12d49c51a4d59e951b401e764d3b6ca751cbf51bc50ed7001a6bcb4935e684c34882",
   "engines": {
     "node": ">=24"
   },
@@ -31,7 +31,7 @@
     "esbuild": "0.28.1",
     "jest": "30.4.2",
     "ts-jest": "29.4.11",
-    "typedoc": "0.28.19",
+    "typedoc": "0.28.20",
     "typescript": "6.0.3"
   },
   "scripts": {
@@ -44,6 +44,6 @@
   },
   "dependencies": {
     "@lezer/lr": "1.4.10",
-    "@prometheus-io/lezer-promql": "0.313.0"
+    "@prometheus-io/lezer-promql": "0.313.1"
   }
 }
