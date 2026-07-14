@@ -12,8 +12,8 @@ importers:
         specifier: 1.4.10
         version: 1.4.10
       '@prometheus-io/lezer-promql':
-        specifier: 0.313.0
-        version: 0.313.0(@lezer/highlight@1.2.3)(@lezer/lr@1.4.10)
+        specifier: 0.313.1
+        version: 0.313.1(@lezer/highlight@1.2.3)(@lezer/lr@1.4.10)
     devDependencies:
       '@types/jest':
         specifier: 30.0.0
@@ -28,8 +28,8 @@ importers:
         specifier: 29.4.11
         version: 29.4.11(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(esbuild@0.28.1)(jest-util@30.4.1)(jest@30.4.2(@types/node@25.9.1))(typescript@6.0.3)
       typedoc:
-        specifier: 0.28.19
-        version: 0.28.19(typescript@6.0.3)
+        specifier: 0.28.20
+        version: 0.28.20(typescript@6.0.3)
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -502,8 +502,8 @@ packages:
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
     engines: {node: ^14.18.0 || >=16.0.0}
 
-  '@prometheus-io/lezer-promql@0.313.0':
-    resolution: {integrity: sha512-CVo7TkOwGLGnDObfE3RyWG2jmVAGYzOkDtVfhyz24N/FdLtcxvQjhK8rgpJstNMpL96XS9523htRTaqatpwlOg==}
+  '@prometheus-io/lezer-promql@0.313.1':
+    resolution: {integrity: sha512-upd5wLz9WtpNVgkbqitbtG2daN5GNQaokG3NPU/PG7aT3xBTba1sfYb3yf9/CzPMeKbqDv8Y9KHzZ3vvQtg17w==}
     peerDependencies:
       '@lezer/highlight': ^1.1.2
       '@lezer/lr': ^1.2.3
@@ -1210,8 +1210,8 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  linkify-it@5.0.1:
-    resolution: {integrity: sha512-wVoTjP4Q6R0NW5hiZkVJaFZPWgtXfoGF+6LucL3/FtiNjmcHhYjEr5f1Kqjirc1nBW07J/ZuRFumqr2oqccEWg==}
+  linkify-it@5.0.2:
+    resolution: {integrity: sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==}
 
   locate-path@5.0.0:
     resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==}
@@ -1239,8 +1239,8 @@ packages:
   makeerror@1.0.12:
     resolution: {integrity: sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==}
 
-  markdown-it@14.2.0:
-    resolution: {integrity: sha512-1TGiQiJVRQ3NPmZH6sx5Cfnmg6GQm9jvC1ch4TK511NjSJvjzKLzn5pPfZRNZkRPZP0HqCioSndqH8v2nRaWVQ==}
+  markdown-it@14.3.0:
+    resolution: {integrity: sha512-RCEsPjR+sr0x+AuYp601tKTkgFG4YEPLCzHST3cQ/fhlJkqAkz1L2/Qbp1j9qw5SBwQHFBoW8+hoN5xssOF0Tw==}
     hasBin: true
 
   mdurl@2.0.0:
@@ -1529,8 +1529,8 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  typedoc@0.28.19:
-    resolution: {integrity: sha512-wKh+lhdmMFivMlc6vRRcMGXeGEHGU2g8a2CkPTJjJlwRf1iXbimWIPcFolCqe4E0d/FRtGszpIrsp3WLpDB8Pw==}
+  typedoc@0.28.20:
+    resolution: {integrity: sha512-uSKqkh8Cr48vllnEy+jdaAgOeR6Y+QCBW7usgUsKj7gJEfR7stw9U/fE49LBnj2tPRKPY0c0EBJSWe9Appmplg==}
     engines: {node: '>= 18', pnpm: '>= 10'}
     hasBin: true
     peerDependencies:
@@ -2146,7 +2146,7 @@ snapshots:
 
   '@pkgr/core@0.3.6': {}
 
-  '@prometheus-io/lezer-promql@0.313.0(@lezer/highlight@1.2.3)(@lezer/lr@1.4.10)':
+  '@prometheus-io/lezer-promql@0.313.1(@lezer/highlight@1.2.3)(@lezer/lr@1.4.10)':
     dependencies:
       '@lezer/highlight': 1.2.3
       '@lezer/lr': 1.4.10
@@ -3010,7 +3010,7 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  linkify-it@5.0.1:
+  linkify-it@5.0.2:
     dependencies:
       uc.micro: 2.1.0
 
@@ -3038,11 +3038,11 @@ snapshots:
     dependencies:
       tmpl: 1.0.5
 
-  markdown-it@14.2.0:
+  markdown-it@14.3.0:
     dependencies:
       argparse: 2.0.1
       entities: 4.5.0
-      linkify-it: 5.0.1
+      linkify-it: 5.0.2
       mdurl: 2.0.0
       punycode.js: 2.3.1
       uc.micro: 2.1.0
@@ -3274,11 +3274,11 @@ snapshots:
 
   type-fest@4.41.0: {}
 
-  typedoc@0.28.19(typescript@6.0.3):
+  typedoc@0.28.20(typescript@6.0.3):
     dependencies:
       '@gerrit0/mini-shiki': 3.23.0
       lunr: 2.3.9
-      markdown-it: 14.2.0
+      markdown-it: 14.3.0
       minimatch: 10.2.5
       typescript: 6.0.3
       yaml: 2.9.0
