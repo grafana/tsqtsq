@@ -3,7 +3,7 @@
 [**API Docs**](https://grafana.github.io/tsqtsq/)
 
 > Looking for Jsonnet? The same API is available as a Jsonnet library for
-> monitoring mixins: see [`jsonnet/`](./jsonnet/). It is kept behaviourally
+> monitoring mixins: see [`jsonnet/`](https://github.com/grafana/tsqtsq/tree/main/jsonnet). It is kept behaviourally
 > identical to the TypeScript implementation by a conformance corpus generated
 > from this repo's test suite.
 

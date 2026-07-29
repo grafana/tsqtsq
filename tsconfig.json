@@ -104,5 +104,7 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
   },
+  /* Only the library sources are compiled; scripts/ is bundled by esbuild (see scripts/generate-fixtures.mjs). */
+  "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.spec.ts", "./dist/**/*", "docs"],
 }
