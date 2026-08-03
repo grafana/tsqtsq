@@ -12,8 +12,8 @@ importers:
         specifier: 1.4.10
         version: 1.4.10
       '@prometheus-io/lezer-promql':
-        specifier: 0.313.1
-        version: 0.313.1(@lezer/highlight@1.2.3)(@lezer/lr@1.4.10)
+        specifier: 0.313.2
+        version: 0.313.2(@lezer/highlight@1.2.3)(@lezer/lr@1.4.10)
     devDependencies:
       '@types/jest':
         specifier: 30.0.0
@@ -505,8 +505,8 @@ packages:
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
     engines: {node: ^14.18.0 || >=16.0.0}
 
-  '@prometheus-io/lezer-promql@0.313.1':
-    resolution: {integrity: sha512-upd5wLz9WtpNVgkbqitbtG2daN5GNQaokG3NPU/PG7aT3xBTba1sfYb3yf9/CzPMeKbqDv8Y9KHzZ3vvQtg17w==}
+  '@prometheus-io/lezer-promql@0.313.2':
+    resolution: {integrity: sha512-pPSHrMD+MBRPZ4zvut4DH/n75+Ahq2pCuI2lkyEfWO8UfpGv3tquyjx3DhozjCXgsHQtTggoG8Q4eG+ZfVadEw==}
     peerDependencies:
       '@lezer/highlight': ^1.1.2
       '@lezer/lr': ^1.2.3
@@ -2278,7 +2278,7 @@ snapshots:
 
   '@pkgr/core@0.3.6': {}
 
-  '@prometheus-io/lezer-promql@0.313.1(@lezer/highlight@1.2.3)(@lezer/lr@1.4.10)':
+  '@prometheus-io/lezer-promql@0.313.2(@lezer/highlight@1.2.3)(@lezer/lr@1.4.10)':
     dependencies:
       '@lezer/highlight': 1.2.3
       '@lezer/lr': 1.4.10
