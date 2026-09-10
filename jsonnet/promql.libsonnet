@@ -173,6 +173,16 @@ local promql = {
   clamp_min(params):: 'clamp_min(%s, %s)' % [params.expr, params.min],
   clamp_max(params):: 'clamp_max(%s, %s)' % [params.expr, params.max],
   clamp(params):: 'clamp(%s, %s, %s)' % [params.expr, params.min, params.max],
+
+
+  histogram_quantile(params):: 'histogram_quantile(%s, %s)' % [params.quantile, params.expr],
+  histogram_fraction(params):: 'histogram_quantile(%s, %s, %s)' % [params.lower, params.upper, params.expr],
+
+  histogram_avg(params):: 'histogram_avg(%s)' % [params.expr],
+  histogram_sum(params):: 'histogram_avg(%s)' % [params.expr],
+  histogram_count(params):: 'histogram_avg(%s)' % [params.expr],
+  histogram_stddev(params):: 'histogram_avg(%s)' % [params.expr],
+  histogram_stdvar(params):: 'histogram_avg(%s)' % [params.expr],
 };
 
 // Composable PromQL metric selector with label matching.
