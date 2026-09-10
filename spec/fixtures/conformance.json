@@ -914,6 +914,72 @@
       "expected": "((a == b) != c)"
     },
     {
+      "suite": "clamp",
+      "fn": "clamp_min",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": 0
+      },
+      "expected": "clamp_min(foo{bar=\"baz\"}, 0)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp_min",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": "$min"
+      },
+      "expected": "clamp_min(foo{bar=\"baz\"}, $min)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp_max",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "max": 100
+      },
+      "expected": "clamp_max(foo{bar=\"baz\"}, 100)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp_max",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "max": "$max"
+      },
+      "expected": "clamp_max(foo{bar=\"baz\"}, $max)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": -10,
+        "max": 100
+      },
+      "expected": "clamp(foo{bar=\"baz\"}, -10, 100)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": "$min",
+        "max": "$max"
+      },
+      "expected": "clamp(foo{bar=\"baz\"}, $min, $max)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": "0",
+        "max": "NaN"
+      },
+      "expected": "clamp(foo{bar=\"baz\"}, 0, NaN)"
+    },
+    {
       "suite": "comparisonBinaryOp",
       "fn": "eq",
       "params": {

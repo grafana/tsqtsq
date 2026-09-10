@@ -116,5 +116,5 @@ export const promql = {
 
   clamp_min: (params: ClampMinParams) => `clamp_min(${params.expr}, ${params.min})`,
   clamp_max: (params: ClampMaxParams) => `clamp_max(${params.expr}, ${params.max})`,
-  clamp: (params: ClampParams) => `clamp(${params.expr}, ${params.min}, ${params.min})`,
+  clamp: (params: ClampParams) => `clamp(${params.expr}, ${params.min}, ${params.max})`,
 };
