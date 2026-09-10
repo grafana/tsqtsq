@@ -308,7 +308,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a + metric_b"
+      "expected": "(metric_a + metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -317,7 +317,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a - metric_b"
+      "expected": "(metric_a - metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -326,7 +326,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a * metric_b"
+      "expected": "(metric_a * metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -335,7 +335,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a / metric_b"
+      "expected": "(metric_a / metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -344,7 +344,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a % metric_b"
+      "expected": "(metric_a % metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -353,7 +353,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a ^ metric_b"
+      "expected": "(metric_a ^ metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -365,7 +365,7 @@
           "instance"
         ]
       },
-      "expected": "metric_a / on (instance) metric_b"
+      "expected": "(metric_a / on (instance) metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -378,7 +378,7 @@
           "job"
         ]
       },
-      "expected": "metric_a * on (instance, job) metric_b"
+      "expected": "(metric_a * on (instance, job) metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -390,7 +390,7 @@
           "job"
         ]
       },
-      "expected": "metric_a / ignoring (job) metric_b"
+      "expected": "(metric_a / ignoring (job) metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -403,7 +403,7 @@
           "env"
         ]
       },
-      "expected": "metric_a - ignoring (job, env) metric_b"
+      "expected": "(metric_a - ignoring (job, env) metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -418,7 +418,7 @@
           "job"
         ]
       },
-      "expected": "metric_a / on (instance) metric_b"
+      "expected": "(metric_a / on (instance) metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -431,7 +431,7 @@
         ],
         "groupLeft": []
       },
-      "expected": "metric_a / on (instance) group_left() metric_b"
+      "expected": "(metric_a / on (instance) group_left() metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -446,7 +446,7 @@
           "job"
         ]
       },
-      "expected": "metric_a / on (instance) group_left (job) metric_b"
+      "expected": "(metric_a / on (instance) group_left (job) metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -462,7 +462,7 @@
           "env"
         ]
       },
-      "expected": "metric_a * on (instance) group_left (job, env) metric_b"
+      "expected": "(metric_a * on (instance) group_left (job, env) metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -476,7 +476,7 @@
         ],
         "groupLeft": []
       },
-      "expected": "kube_pod_info * on (pod, namespace) group_left() (k8s_pod_phase{phase=\"Running\"} <= bool 2)"
+      "expected": "(kube_pod_info * on (pod, namespace) group_left() (k8s_pod_phase{phase=\"Running\"} <= bool 2))"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -489,7 +489,7 @@
         ],
         "groupRight": []
       },
-      "expected": "metric_a / on (instance) group_right() metric_b"
+      "expected": "(metric_a / on (instance) group_right() metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -503,7 +503,7 @@
         ],
         "groupRight": []
       },
-      "expected": "kube_pod_info * on (pod, namespace) group_right() (k8s_pod_phase{phase=\"Running\"} <= bool 2)"
+      "expected": "(kube_pod_info * on (pod, namespace) group_right() (k8s_pod_phase{phase=\"Running\"} <= bool 2))"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -518,7 +518,7 @@
           "env"
         ]
       },
-      "expected": "metric_a + ignoring (job) group_right (env) metric_b"
+      "expected": "(metric_a + ignoring (job) group_right (env) metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -536,7 +536,7 @@
           "env"
         ]
       },
-      "expected": "metric_a / on (instance) group_left (job) metric_b"
+      "expected": "(metric_a / on (instance) group_left (job) metric_b)"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -565,7 +565,7 @@
         ],
         "groupLeft": []
       },
-      "expected": "rate(http_requests_total{code=\"200\"}[$__rate_interval]) / on (instance) group_left() rate(http_requests_total[$__rate_interval])"
+      "expected": "(rate(http_requests_total{code=\"200\"}[$__rate_interval]) / on (instance) group_left() rate(http_requests_total[$__rate_interval]))"
     },
     {
       "suite": "arithmeticBinaryOp",
@@ -590,13 +590,337 @@
       "error": "group_left/group_right require an \"on\" or \"ignoring\" clause"
     },
     {
+      "suite": "binaryOpPrecedence",
+      "fn": "mul",
+      "params": {
+        "left": "a",
+        "right": "b"
+      },
+      "expected": "(a * b)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "pow",
+      "params": {
+        "left": "(a * b)",
+        "right": "c"
+      },
+      "expected": "((a * b) ^ c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "mul",
+      "params": {
+        "left": "b",
+        "right": "c"
+      },
+      "expected": "(b * c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "pow",
+      "params": {
+        "left": "a",
+        "right": "(b * c)"
+      },
+      "expected": "(a ^ (b * c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "add",
+      "params": {
+        "left": "a",
+        "right": "b"
+      },
+      "expected": "(a + b)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "mul",
+      "params": {
+        "left": "(a + b)",
+        "right": "c"
+      },
+      "expected": "((a + b) * c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "add",
+      "params": {
+        "left": "b",
+        "right": "c"
+      },
+      "expected": "(b + c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "mul",
+      "params": {
+        "left": "a",
+        "right": "(b + c)"
+      },
+      "expected": "(a * (b + c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "eq",
+      "params": {
+        "left": "a",
+        "right": "b"
+      },
+      "expected": "(a == b)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "add",
+      "params": {
+        "left": "(a == b)",
+        "right": "c"
+      },
+      "expected": "((a == b) + c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "eq",
+      "params": {
+        "left": "b",
+        "right": "c"
+      },
+      "expected": "(b == c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "add",
+      "params": {
+        "left": "a",
+        "right": "(b == c)"
+      },
+      "expected": "(a + (b == c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "and",
+      "params": {
+        "left": "a",
+        "right": "b"
+      },
+      "expected": "(a and b)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "eq",
+      "params": {
+        "left": "(a and b)",
+        "right": "c"
+      },
+      "expected": "((a and b) == c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "and",
+      "params": {
+        "left": "b",
+        "right": "c"
+      },
+      "expected": "(b and c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "eq",
+      "params": {
+        "left": "a",
+        "right": "(b and c)"
+      },
+      "expected": "(a == (b and c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "or",
+      "params": {
+        "left": "a",
+        "right": "b"
+      },
+      "expected": "(a or b)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "and",
+      "params": {
+        "left": "(a or b)",
+        "right": "c"
+      },
+      "expected": "((a or b) and c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "or",
+      "params": {
+        "left": "b",
+        "right": "c"
+      },
+      "expected": "(b or c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "and",
+      "params": {
+        "left": "a",
+        "right": "(b or c)"
+      },
+      "expected": "(a and (b or c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "add",
+      "params": {
+        "left": "(a * b)",
+        "right": "c"
+      },
+      "expected": "((a * b) + c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "add",
+      "params": {
+        "left": "a",
+        "right": "(b * c)"
+      },
+      "expected": "(a + (b * c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "sub",
+      "params": {
+        "left": "b",
+        "right": "c"
+      },
+      "expected": "(b - c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "sub",
+      "params": {
+        "left": "a",
+        "right": "(b - c)"
+      },
+      "expected": "(a - (b - c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "div",
+      "params": {
+        "left": "a",
+        "right": "(b * c)"
+      },
+      "expected": "(a / (b * c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "unless",
+      "params": {
+        "left": "b",
+        "right": "c"
+      },
+      "expected": "(b unless c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "and",
+      "params": {
+        "left": "a",
+        "right": "(b unless c)"
+      },
+      "expected": "(a and (b unless c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "neq",
+      "params": {
+        "left": "b",
+        "right": "c"
+      },
+      "expected": "(b != c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "eq",
+      "params": {
+        "left": "a",
+        "right": "(b != c)"
+      },
+      "expected": "(a == (b != c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "pow",
+      "params": {
+        "left": "a",
+        "right": "b"
+      },
+      "expected": "(a ^ b)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "pow",
+      "params": {
+        "left": "(a ^ b)",
+        "right": "c"
+      },
+      "expected": "((a ^ b) ^ c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "sub",
+      "params": {
+        "left": "a",
+        "right": "b"
+      },
+      "expected": "(a - b)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "sub",
+      "params": {
+        "left": "(a - b)",
+        "right": "c"
+      },
+      "expected": "((a - b) - c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "pow",
+      "params": {
+        "left": "b",
+        "right": "c"
+      },
+      "expected": "(b ^ c)"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "pow",
+      "params": {
+        "left": "a",
+        "right": "(b ^ c)"
+      },
+      "expected": "(a ^ (b ^ c))"
+    },
+    {
+      "suite": "binaryOpPrecedence",
+      "fn": "neq",
+      "params": {
+        "left": "(a == b)",
+        "right": "c"
+      },
+      "expected": "((a == b) != c)"
+    },
+    {
       "suite": "comparisonBinaryOp",
       "fn": "eq",
       "params": {
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a == metric_b"
+      "expected": "(metric_a == metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -605,7 +929,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a != metric_b"
+      "expected": "(metric_a != metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -614,7 +938,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a > metric_b"
+      "expected": "(metric_a > metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -623,7 +947,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a < metric_b"
+      "expected": "(metric_a < metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -632,7 +956,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a >= metric_b"
+      "expected": "(metric_a >= metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -641,7 +965,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a <= metric_b"
+      "expected": "(metric_a <= metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -651,7 +975,7 @@
         "right": "1",
         "bool": true
       },
-      "expected": "metric_a == bool 1"
+      "expected": "(metric_a == bool 1)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -661,7 +985,7 @@
         "right": "0",
         "bool": true
       },
-      "expected": "metric_a != bool 0"
+      "expected": "(metric_a != bool 0)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -671,7 +995,7 @@
         "right": "0",
         "bool": true
       },
-      "expected": "metric_a > bool 0"
+      "expected": "(metric_a > bool 0)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -681,7 +1005,7 @@
         "right": "0",
         "bool": true
       },
-      "expected": "metric_a < bool 0"
+      "expected": "(metric_a < bool 0)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -691,7 +1015,7 @@
         "right": "1",
         "bool": true
       },
-      "expected": "metric_a >= bool 1"
+      "expected": "(metric_a >= bool 1)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -701,7 +1025,7 @@
         "right": "2",
         "bool": true
       },
-      "expected": "metric_a <= bool 2"
+      "expected": "(metric_a <= bool 2)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -711,7 +1035,7 @@
         "right": "0",
         "bool": false
       },
-      "expected": "metric_a > 0"
+      "expected": "(metric_a > 0)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -723,7 +1047,7 @@
           "instance"
         ]
       },
-      "expected": "metric_a > on (instance) metric_b"
+      "expected": "(metric_a > on (instance) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -736,7 +1060,7 @@
           "job"
         ]
       },
-      "expected": "metric_a < on (instance, job) metric_b"
+      "expected": "(metric_a < on (instance, job) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -748,7 +1072,7 @@
           "job"
         ]
       },
-      "expected": "metric_a >= ignoring (job) metric_b"
+      "expected": "(metric_a >= ignoring (job) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -761,7 +1085,7 @@
           "env"
         ]
       },
-      "expected": "metric_a <= ignoring (job, env) metric_b"
+      "expected": "(metric_a <= ignoring (job, env) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -776,7 +1100,7 @@
           "job"
         ]
       },
-      "expected": "metric_a == on (instance) metric_b"
+      "expected": "(metric_a == on (instance) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -789,7 +1113,7 @@
           "instance"
         ]
       },
-      "expected": "metric_a == bool on (instance) metric_b"
+      "expected": "(metric_a == bool on (instance) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -803,7 +1127,7 @@
           "env"
         ]
       },
-      "expected": "metric_a >= bool ignoring (job, env) metric_b"
+      "expected": "(metric_a >= bool ignoring (job, env) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -816,7 +1140,7 @@
         ],
         "groupLeft": []
       },
-      "expected": "metric_a > on (instance) group_left() metric_b"
+      "expected": "(metric_a > on (instance) group_left() metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -831,7 +1155,7 @@
           "job"
         ]
       },
-      "expected": "metric_a > on (instance) group_left (job) metric_b"
+      "expected": "(metric_a > on (instance) group_left (job) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -847,7 +1171,7 @@
           "env"
         ]
       },
-      "expected": "metric_a < on (instance) group_left (job, env) metric_b"
+      "expected": "(metric_a < on (instance) group_left (job, env) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -861,7 +1185,7 @@
         ],
         "groupLeft": []
       },
-      "expected": "kube_pod_info >= on (pod, namespace) group_left() (k8s_pod_phase{phase=\"Running\"} <= bool 2)"
+      "expected": "(kube_pod_info >= on (pod, namespace) group_left() (k8s_pod_phase{phase=\"Running\"} <= bool 2))"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -874,7 +1198,7 @@
         ],
         "groupRight": []
       },
-      "expected": "metric_a < on (instance) group_right() metric_b"
+      "expected": "(metric_a < on (instance) group_right() metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -888,7 +1212,7 @@
         ],
         "groupRight": []
       },
-      "expected": "kube_pod_info <= on (pod, namespace) group_right() (k8s_pod_phase{phase=\"Running\"} <= bool 2)"
+      "expected": "(kube_pod_info <= on (pod, namespace) group_right() (k8s_pod_phase{phase=\"Running\"} <= bool 2))"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -903,7 +1227,7 @@
           "env"
         ]
       },
-      "expected": "metric_a != ignoring (job) group_right (env) metric_b"
+      "expected": "(metric_a != ignoring (job) group_right (env) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -921,7 +1245,7 @@
           "env"
         ]
       },
-      "expected": "metric_a > on (instance) group_left (job) metric_b"
+      "expected": "(metric_a > on (instance) group_left (job) metric_b)"
     },
     {
       "suite": "comparisonBinaryOp",
@@ -1018,7 +1342,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a and metric_b"
+      "expected": "(metric_a and metric_b)"
     },
     {
       "suite": "logicalOp",
@@ -1027,7 +1351,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a or metric_b"
+      "expected": "(metric_a or metric_b)"
     },
     {
       "suite": "logicalOp",
@@ -1036,7 +1360,7 @@
         "left": "metric_a",
         "right": "metric_b"
       },
-      "expected": "metric_a unless metric_b"
+      "expected": "(metric_a unless metric_b)"
     },
     {
       "suite": "logicalOp",
@@ -1049,7 +1373,7 @@
           "namespace"
         ]
       },
-      "expected": "metric_a or on (cluster, namespace) metric_b"
+      "expected": "(metric_a or on (cluster, namespace) metric_b)"
     },
     {
       "suite": "offset",

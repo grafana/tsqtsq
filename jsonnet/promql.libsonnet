@@ -154,7 +154,7 @@ local promql = {
             (if std.length(groupRight) > 0 then ' group_right (%s)' % std.join(', ', groupRight) else ' group_right()')
           else ''
         );
-      '%s %s%s%s %s' % [params.left, op, if bool == true then ' bool' else '', matching, params.right],
+      '(%s %s%s%s %s)' % [params.left, op, if bool == true then ' bool' else '', matching, params.right],
 
   add(params):: self.binaryOp('+', params),
   sub(params):: self.binaryOp('-', params),
