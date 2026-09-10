@@ -10,6 +10,9 @@ import {
   Offset,
   Rate,
   Increase,
+  ClampMinParams,
+  ClampMaxParams,
+  ClampParams,
 } from './types';
 import { buildOffsetString } from './utils';
 
@@ -110,4 +113,8 @@ export const promql = {
   lt: (params: ComparisonBinaryOpParams) => promql.binaryOp('<', params),
   gte: (params: ComparisonBinaryOpParams) => promql.binaryOp('>=', params),
   lte: (params: ComparisonBinaryOpParams) => promql.binaryOp('<=', params),
+
+  clamp_min: (params: ClampMinParams) => `clamp_min(${params.expr}, ${params.min})`,
+  clamp_max: (params: ClampMaxParams) => `clamp_max(${params.expr}, ${params.max})`,
+  clamp: (params: ClampParams) => `clamp(${params.expr}, ${params.min}, ${params.min})`,
 };

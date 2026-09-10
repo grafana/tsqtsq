@@ -169,6 +169,10 @@ local promql = {
   lt(params):: self.binaryOp('<', params),
   gte(params):: self.binaryOp('>=', params),
   lte(params):: self.binaryOp('<=', params),
+
+  clamp_min(params):: 'clamp_min(%s, %s)' % [params.expr, params.min],
+  clamp_max(params):: 'clamp_max(%s, %s)' % [params.expr, params.max],
+  clamp(params):: 'clamp(%s, %s, %s)' % [params.expr, params.min, params.max],
 };
 
 // Composable PromQL metric selector with label matching.
