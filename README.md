@@ -113,7 +113,7 @@ promql.div({ left: 'http_requests_total', right: 'http_requests_duration_seconds
 becomes
 
 ```
-http_requests_total / http_requests_duration_seconds
+(http_requests_total / http_requests_duration_seconds)
 ```
 
 `vector matching with on`
@@ -130,7 +130,7 @@ promql.div({
 becomes
 
 ```
-http_requests_total{job="api"} / on (instance) group_left() http_requests_total{job="api"}
+(http_requests_total{job="api"} / on (instance) group_left() http_requests_total{job="api"})
 ```
 
 `composing with rate`
@@ -147,7 +147,7 @@ promql.div({
 becomes
 
 ```
-rate(http_requests_total{code="200"}[$__rate_interval]) / on (instance) group_left (job) rate(http_requests_total[$__rate_interval])
+(rate(http_requests_total{code="200"}[$__rate_interval]) / on (instance) group_left (job) rate(http_requests_total[$__rate_interval]))
 ```
 
 ### Pretty-printing expressions

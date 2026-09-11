@@ -94,7 +94,7 @@ export const promql = {
     } else if (groupRight !== undefined) {
       matching += groupRight.length > 0 ? ` group_right (${groupRight.join(', ')})` : ' group_right()';
     }
-    return `${left} ${op}${bool ? ' bool' : ''}${matching} ${right}`;
+    return `(${left} ${op}${bool ? ' bool' : ''}${matching} ${right})`;
   },
 
   add: (params: ArithmeticBinaryOpParams) => promql.binaryOp('+', params),

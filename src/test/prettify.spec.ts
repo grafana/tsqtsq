@@ -89,7 +89,7 @@ describe('prettify', () => {
         prettify({
           expr: promql.div({ left: 'http_requests_total', right: 'http_requests_duration_seconds' }),
         }),
-      expected: 'http_requests_total / http_requests_duration_seconds',
+      expected: '(http_requests_total / http_requests_duration_seconds)',
     },
     {
       name: 'preserves the $__rate_interval template variable in a range selector',
@@ -175,8 +175,10 @@ describe('prettify', () => {
           }),
         }),
       expected: [
-        'rate(http_requests_total{code="200"}[$__rate_interval])',
-        '/ rate(http_errors_total{code="500"}[$__rate_interval])',
+        '(',
+        '  rate(http_requests_total{code="200"}[$__rate_interval])',
+        '  / rate(http_errors_total{code="500"}[$__rate_interval])',
+        ')',
       ].join('\n'),
     },
     {
@@ -191,7 +193,12 @@ describe('prettify', () => {
           }),
           maxWidth: 40,
         }),
-      expected: ['aaa_total{job="api"}', '/ on (instance) group_left() bbb_total{job="api"}'].join('\n'),
+      expected: [
+        '(',
+        '  aaa_total{job="api"}',
+        '  / on (instance) group_left() bbb_total{job="api"}',
+        ')',
+      ].join('\n'),
     },
     {
       name: 'breaks binary operations inside broken groups with indentation',
