@@ -914,6 +914,82 @@
       "expected": "((a == b) != c)"
     },
     {
+      "suite": "clamp",
+      "fn": "clamp_min",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": 0
+      },
+      "expected": "clamp_min(foo{bar=\"baz\"}, 0)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp_min",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": "$min"
+      },
+      "expected": "clamp_min(foo{bar=\"baz\"}, $min)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp_max",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "max": 100
+      },
+      "expected": "clamp_max(foo{bar=\"baz\"}, 100)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp_max",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "max": "$max"
+      },
+      "expected": "clamp_max(foo{bar=\"baz\"}, $max)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": -10,
+        "max": 100
+      },
+      "expected": "clamp(foo{bar=\"baz\"}, -10, 100)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": "$min",
+        "max": "$max"
+      },
+      "expected": "clamp(foo{bar=\"baz\"}, $min, $max)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": "0",
+        "max": "NaN"
+      },
+      "expected": "clamp(foo{bar=\"baz\"}, 0, NaN)"
+    },
+    {
+      "suite": "clamp",
+      "fn": "clamp",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": 0.001,
+        "max": 0.1
+      },
+      "expected": "clamp(foo{bar=\"baz\"}, 0.001, 0.1)"
+    },
+    {
       "suite": "comparisonBinaryOp",
       "fn": "eq",
       "params": {
@@ -1268,6 +1344,104 @@
         ]
       },
       "error": "group_left/group_right require an \"on\" or \"ignoring\" clause"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_quantile",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])",
+        "quantile": 0.99
+      },
+      "expected": "histogram_quantile(0.99, rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_quantile",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])",
+        "quantile": "0.999999"
+      },
+      "expected": "histogram_quantile(0.999999, rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_fraction",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])",
+        "lower": 0.1,
+        "upper": 0.9
+      },
+      "expected": "histogram_fraction(0.1, 0.9, rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_fraction",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])",
+        "lower": "-Inf",
+        "upper": 0
+      },
+      "expected": "histogram_fraction(-Inf, 0, rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_fraction",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])",
+        "lower": 0,
+        "upper": "+Inf"
+      },
+      "expected": "histogram_fraction(0, +Inf, rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_fraction",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])",
+        "lower": "-Inf",
+        "upper": "+Inf"
+      },
+      "expected": "histogram_fraction(-Inf, +Inf, rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_avg",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])"
+      },
+      "expected": "histogram_avg(rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_sum",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])"
+      },
+      "expected": "histogram_sum(rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_count",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])"
+      },
+      "expected": "histogram_count(rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_stddev",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])"
+      },
+      "expected": "histogram_stddev(rate(http_request_duration_seconds[5m]))"
+    },
+    {
+      "suite": "histogram",
+      "fn": "histogram_stdvar",
+      "params": {
+        "expr": "rate(http_request_duration_seconds[5m])"
+      },
+      "expected": "histogram_stdvar(rate(http_request_duration_seconds[5m]))"
     },
     {
       "suite": "increase",

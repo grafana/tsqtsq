@@ -20,4 +20,10 @@ export type {
   ArithmeticBinaryOpParams,
   ComparisonBinaryOpParams,
   PrettifyOptions,
+  ClampMinParams,
+  ClampMaxParams,
+  ClampParams,
+  HistogramQuantileParams,
+  HistogramFractionParams,
+  ExprParam,
 } from './types';

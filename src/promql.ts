@@ -10,6 +10,12 @@ import {
   Offset,
   Rate,
   Increase,
+  ClampMinParams,
+  ClampMaxParams,
+  ClampParams,
+  HistogramQuantileParams,
+  HistogramFractionParams,
+  ExprParam,
 } from './types';
 import { buildOffsetString } from './utils';
 
@@ -110,4 +116,17 @@ export const promql = {
   lt: (params: ComparisonBinaryOpParams) => promql.binaryOp('<', params),
   gte: (params: ComparisonBinaryOpParams) => promql.binaryOp('>=', params),
   lte: (params: ComparisonBinaryOpParams) => promql.binaryOp('<=', params),
+
+  clamp_min: (params: ClampMinParams) => `clamp_min(${params.expr}, ${params.min})`,
+  clamp_max: (params: ClampMaxParams) => `clamp_max(${params.expr}, ${params.max})`,
+  clamp: (params: ClampParams) => `clamp(${params.expr}, ${params.min}, ${params.max})`,
+
+  histogram_quantile: ({ expr, quantile }: HistogramQuantileParams) => `histogram_quantile(${quantile}, ${expr})`,
+  histogram_fraction: ({ expr, lower, upper }: HistogramFractionParams) => `histogram_fraction(${lower}, ${upper}, ${expr})`,
+  
+  histogram_avg: ({ expr }: ExprParam) => `histogram_avg(${expr})`,
+  histogram_sum: ({ expr }: ExprParam) => `histogram_sum(${expr})`,
+  histogram_count: ({ expr }: ExprParam) => `histogram_count(${expr})`,
+  histogram_stddev: ({ expr }: ExprParam) => `histogram_stddev(${expr})`,
+  histogram_stdvar: ({ expr }: ExprParam) => `histogram_stdvar(${expr})`,
 };

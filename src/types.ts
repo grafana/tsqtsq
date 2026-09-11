@@ -132,3 +132,42 @@ export type PrettifyOptions = {
   /** maximum line width before an expression is broken onto multiple lines; defaults to 80 */
   maxWidth?: number;
 };
+
+/** Parameters for the clamp_min function */
+export type ClampMinParams = {
+  /** the expression to clamp */
+  expr: string;
+
+  /* the lower limit to clamp to */
+  min: number | string;
+}
+
+/** Parameters for the clamp_max function */
+export type ClampMaxParams = {
+  /** the expression to clamp */
+  expr: string;
+
+  /* the upper limit to clamp to */
+  max: number | string;
+}
+
+/** Parameters for the clamp function */
+export type ClampParams =  ClampMinParams & ClampMaxParams;
+
+export type ExprParam = {
+  /** An expr */
+  expr: string;
+}
+
+export type HistogramQuantileParams = ExprParam & {
+  /** The quantile/percentile represented as value between 0 and 1 */
+  quantile: number | string;
+}
+
+export type HistogramFractionParams = ExprParam & {
+  //** Lower boundary for observations to include, can also be -Inf */
+  lower: number | string;
+
+  //** Upper boundary for observations to include, can also be +Inf */
+  upper: number | string;
+}

@@ -23,8 +23,17 @@
 //      The TypeScript implementation emits them in object insertion order.
 //      PromQL requires descending order, so callers should already be
 //      passing units this way.
+//   3. Jsonnet may spell numeric histogram arguments differently from
+//      JavaScript (for example around exponent thresholds), while preserving
+//      their numeric value. Pass these arguments as strings when their exact
+//      textual representation matters.
 
 local str(v) = if std.type(v) == 'string' then v else std.toString(v);
+local scalar(v) =
+  if std.type(v) != 'number' then v
+  else
+    local compact = '%.15g' % v;
+    if std.parseJson(compact) == v then compact else std.toString(v);
 
 // PromQL label matching operators (=, !=, =~, !~).
 // Mirrors the MatchingOperator enum in src/types.ts.
@@ -169,6 +178,21 @@ local promql = {
   lt(params):: self.binaryOp('<', params),
   gte(params):: self.binaryOp('>=', params),
   lte(params):: self.binaryOp('<=', params),
+
+  clamp_min(params):: 'clamp_min(%s, %s)' % [params.expr, scalar(params.min)],
+  clamp_max(params):: 'clamp_max(%s, %s)' % [params.expr, scalar(params.max)],
+  clamp(params):: 'clamp(%s, %s, %s)' % [params.expr, scalar(params.min), scalar(params.max)],
+
+
+  histogram_quantile(params):: 'histogram_quantile(%s, %s)' % [scalar(params.quantile), params.expr],
+  histogram_fraction(params):: 'histogram_fraction(%s, %s, %s)'
+                               % [scalar(params.lower), scalar(params.upper), params.expr],
+
+  histogram_avg(params):: 'histogram_avg(%s)' % [params.expr],
+  histogram_sum(params):: 'histogram_sum(%s)' % [params.expr],
+  histogram_count(params):: 'histogram_count(%s)' % [params.expr],
+  histogram_stddev(params):: 'histogram_stddev(%s)' % [params.expr],
+  histogram_stdvar(params):: 'histogram_stdvar(%s)' % [params.expr],
 };
 
 // Composable PromQL metric selector with label matching.
