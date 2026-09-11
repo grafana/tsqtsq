@@ -29,7 +29,7 @@
 //      textual representation matters.
 
 local str(v) = if std.type(v) == 'string' then v else std.toString(v);
-local histogramScalar(v) =
+local scalar(v) =
   if std.type(v) != 'number' then v
   else
     local compact = '%.15g' % v;
@@ -179,14 +179,14 @@ local promql = {
   gte(params):: self.binaryOp('>=', params),
   lte(params):: self.binaryOp('<=', params),
 
-  clamp_min(params):: 'clamp_min(%s, %s)' % [params.expr, params.min],
-  clamp_max(params):: 'clamp_max(%s, %s)' % [params.expr, params.max],
-  clamp(params):: 'clamp(%s, %s, %s)' % [params.expr, params.min, params.max],
+  clamp_min(params):: 'clamp_min(%s, %s)' % [params.expr, scalar(params.min)],
+  clamp_max(params):: 'clamp_max(%s, %s)' % [params.expr, scalar(params.max)],
+  clamp(params):: 'clamp(%s, %s, %s)' % [params.expr, scalar(params.min), scalar(params.max)],
 
 
-  histogram_quantile(params):: 'histogram_quantile(%s, %s)' % [histogramScalar(params.quantile), params.expr],
+  histogram_quantile(params):: 'histogram_quantile(%s, %s)' % [scalar(params.quantile), params.expr],
   histogram_fraction(params):: 'histogram_fraction(%s, %s, %s)'
-                               % [histogramScalar(params.lower), histogramScalar(params.upper), params.expr],
+                               % [scalar(params.lower), scalar(params.upper), params.expr],
 
   histogram_avg(params):: 'histogram_avg(%s)' % [params.expr],
   histogram_sum(params):: 'histogram_sum(%s)' % [params.expr],

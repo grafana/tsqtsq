@@ -31,6 +31,10 @@ describe('Functions: clamp', () => {
       actual: () => promql.clamp({ expr: 'foo{bar="baz"}', min: '0', max: 'NaN' }),
       expected: 'clamp(foo{bar="baz"}, 0, NaN)',
     },
+    {
+      actual: () => promql.clamp({ expr: 'foo{bar="baz"}', min: 0.001, max: 0.1 }),
+      expected: 'clamp(foo{bar="baz"}, 0.001, 0.1)',
+    },
   ])('Generate PromQL clamp query: $expected', ({ actual, expected }) => {
     expect(actual()).toStrictEqual(expected);
   });

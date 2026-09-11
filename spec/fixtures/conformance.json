@@ -980,6 +980,16 @@
       "expected": "clamp(foo{bar=\"baz\"}, 0, NaN)"
     },
     {
+      "suite": "clamp",
+      "fn": "clamp",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "min": 0.001,
+        "max": 0.1
+      },
+      "expected": "clamp(foo{bar=\"baz\"}, 0.001, 0.1)"
+    },
+    {
       "suite": "comparisonBinaryOp",
       "fn": "eq",
       "params": {
