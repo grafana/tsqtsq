@@ -35,7 +35,7 @@ promql.div({
   right: 'node_memory_MemTotal_bytes',
   on: ['instance'],
 });
-// => node_memory_MemAvailable_bytes / on (instance) node_memory_MemTotal_bytes
+// => (node_memory_MemAvailable_bytes / on (instance) node_memory_MemTotal_bytes)
 ```
 
 ## Label Operations
