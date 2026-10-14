@@ -8,6 +8,7 @@ import {
   LabelReplace,
   LogicalOpParams,
   Offset,
+  OrVector,
   Rate,
   Increase,
   ClampMinParams,
@@ -72,6 +73,8 @@ export const promql = {
 
   rate: ({ expr, interval = '$__rate_interval' }: Rate) => `rate(${expr}[${interval}])`,
   increase: ({ expr, interval = '$__range' }: Increase) => `increase(${expr}[${interval}])`,
+
+  orVector: ({ expr, fallback = 0 }: OrVector) => `(${expr} or on() vector(${fallback}))`,
 
   // Labels
   label_replace: ({ expr, newLabel, existingLabel, replacement = '$1', regex = '(.*)' }: LabelReplace) =>
