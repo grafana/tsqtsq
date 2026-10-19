@@ -80,6 +80,14 @@ export type Increase = {
   interval?: string;
 };
 
+/** Parameters for the `expr or on() vector(fallback)` idiom. */
+export type OrVector = {
+  expr: string;
+
+  /** value passed to vector(); defaults to 0 */
+  fallback?: number | string;
+};
+
 /** Parameters for the label_replace() function. */
 export type LabelReplace = {
   expr: string;

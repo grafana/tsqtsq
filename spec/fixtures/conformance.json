@@ -1615,6 +1615,56 @@
       "expected": "offset 2y1d42h2m3s"
     },
     {
+      "suite": "orVector",
+      "fn": "orVector",
+      "params": {
+        "expr": "foo{bar=\"baz\"}"
+      },
+      "expected": "(foo{bar=\"baz\"} or on() vector(0))"
+    },
+    {
+      "suite": "orVector",
+      "fn": "orVector",
+      "params": {
+        "expr": "foo{bar=\"baz\"}",
+        "fallback": 1
+      },
+      "expected": "(foo{bar=\"baz\"} or on() vector(1))"
+    },
+    {
+      "suite": "orVector",
+      "fn": "orVector",
+      "params": {
+        "expr": "foo",
+        "fallback": "$default"
+      },
+      "expected": "(foo or on() vector($default))"
+    },
+    {
+      "suite": "orVector",
+      "fn": "rate",
+      "params": {
+        "expr": "foo"
+      },
+      "expected": "rate(foo[$__rate_interval])"
+    },
+    {
+      "suite": "orVector",
+      "fn": "sum",
+      "params": {
+        "expr": "rate(foo[$__rate_interval])"
+      },
+      "expected": "sum(rate(foo[$__rate_interval]))"
+    },
+    {
+      "suite": "orVector",
+      "fn": "orVector",
+      "params": {
+        "expr": "sum(rate(foo[$__rate_interval]))"
+      },
+      "expected": "(sum(rate(foo[$__rate_interval])) or on() vector(0))"
+    },
+    {
       "suite": "rate",
       "fn": "rate",
       "params": {

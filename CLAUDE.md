@@ -25,6 +25,8 @@ tsqtsq is a TypeScript library for creating reusable, type-safe PromQL (Promethe
 
 When changing `src/promql.ts`, `src/expression.ts` or `src/utils.ts` behaviour: update the jest specs, run `pnpm run generate:fixtures`, commit the fixtures diff, and mirror the change in `jsonnet/promql.libsonnet` (CI enforces all of this).
 
+In `jsonnet/promql.libsonnet`, format values that are `number`s in the TypeScript types (`min`, `max`, `quantile`, `fallback`, ...) with `scalar()` so the output matches JavaScript's number-to-string conversion. Reserve `str()` for values that are strings or integer unit counts (e.g. offset units). Grep existing callers of `scalar(` (`clamp*`, `histogram_*`, `orVector`) before choosing.
+
 ## Code Conventions
 
 - **Formatting**: Prettier — 120 char lines, single quotes, trailing commas (ES5), semicolons, 2-space indent

@@ -118,6 +118,8 @@ local promql = {
   rate(params):: 'rate(%s[%s])' % [params.expr, std.get(params, 'interval', '$__rate_interval')],
   increase(params):: 'increase(%s[%s])' % [params.expr, std.get(params, 'interval', '$__range')],
 
+  orVector(params):: '(%s or on() vector(%s))' % [params.expr, scalar(std.get(params, 'fallback', 0))],
+
   // Labels
   label_replace(params)::
     'label_replace(%s, "%s", "%s", "%s", "%s")' % [
