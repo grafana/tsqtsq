@@ -26,4 +26,5 @@ export type {
   HistogramQuantileParams,
   HistogramFractionParams,
   ExprParam,
+  OrVector,
 } from './types';
