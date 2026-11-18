@@ -51,3 +51,4 @@ In `jsonnet/promql.libsonnet`, format values that are `number`s in the TypeScrip
 ## License
 
 Apache-2.0
+- Security issues should be reported via [Grafana's security issue reporting page](https://grafana.com/legal/report-a-security-issue/) and not directly in this repository.
